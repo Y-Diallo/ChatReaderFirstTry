@@ -1,0 +1,61 @@
+1. ride snowball(repeat)
+/execute at @e[type=snowball] run tp @p ~0.1 ~0.1 ~0.1
+
+2. human drill (repeat)
+/execute anchored feet at yman234 run fill ~-5 ~-5 ~-5 ~5 ~3 ~5 air replace stone
+
+3. tnt
+/summon tnt ~ ~ ~ {Fuse:1}
+
+4. block spawns where ever you walk
+/execute at @p run setblock ~ ~-1 ~ sandstone
+
+5. clear inventory and ground items
+/clear
+
+6. kill mobs
+/kill  @e[type=!player,type=!ocelot,type=!wolf,type=!armor_stand]
+
+7. kill me
+/kill yman234
+
+8. invisible mobs
+
+9. supa sword
+/give @p netherite_sword{Enchantments:[{id:sharpness,lvl:1000}]}
+/give @p minecraft:netherite_pickaxe{display:{Name:"{\"text\":\"OP FORTUNE PICKAXE\",\"italic\":false}"},Unbreakable:100,Enchantments:[{id:unbreaking,lvl:1000},{id:mending,lvl:1000},{id:efficiency,lvl:1000},{id:fortune,lvl:1000}]}
+
+10. hardcore parkour
+
+11. spawn wither
+/summon wither
+
+12. spawn ender dragon
+/summon minecraft:ender_dragon
+
+13. zombie hoard 1000 mobs add custom names
+/summon cow ~ ~ ~ {CustomName:"\"<value>\""}
+
+14. art with a snowball (exploding snowballs)
+execute as @e[type=snowball] at @s run summon minecraft:area_effect_cloud ~ ~ ~ {Duration:2s,Tags:["explosion_watcher"]}
+execute as @e[type=minecraft:area_effect_cloud,tag=explosion_watcher] at @s unless entity @e[type=minecraft:snowball,distance=..3] run summon tnt ~ ~ ~
+
+15. full armor with enchants
+/give @p minecraft:netherite_helmet{display:{Name:"{\"text\":\"OP HELMET\",\"italic\":false}"},Unbreakable:100,Enchantments:[{id:protection,lvl:255},{id:thorns,lvl:255},{id:mending,lvl:255},{id:unbreaking,lvl:255}]}
+/give @p minecraft:netherite_chestplate{display:{Name:"{\"text\":\"OP CHESTPLATE\",\"italic\":false}"},Unbreakable:100,Enchantments:[{id:protection,lvl:255},{id:thorns,lvl:255},{id:mending,lvl:255},{id:unbreaking,lvl:255}]}
+/give @p minecraft:netherite_leggings{display:{Name:"{\"text\":\"OP LEGGINGS\",\"italic\":false}"},Unbreakable:100,Enchantments:[{id:protection,lvl:255},{id:thorns,lvl:255},{id:mending,lvl:255},{id:unbreaking,lvl:255}]}
+/give @p minecraft:netherite_boots{display:{Name:"{\"text\":\"OP BOOTS\",\"italic\":false}"},Unbreakable:100,Enchantments:[{id:protection,lvl:255},{id:thorns,lvl:255},{id:mending,lvl:255},{id:unbreaking,lvl:255}]}
+16. spawn twitch chatter as mob
+/summon minecraft:villager ~ ~ ~ {CustomName:"\"<value>\""}
+17. kill everything
+/kill @e
+
+18. spawn eyes of ender
+/give yman234 minecraft:ender_eye 64
+
+19. go to the end FIND THE END POSITION FIRST
+/execute in the_end run tp yman234 ~ ~ ~
+
+20. Supa bow //spawn an arrow too
+/give @p minecraft:bow{Enchantments:[{id:"minecraft:sharpness",lvl:999999999},{id:"minecraft:power",lvl:999999999},{id:"minecraft:flame",lvl:999999999},{id:"minecraft:infinity",lvl:1}]}
+/give yman234 arrow

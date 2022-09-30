@@ -1,0 +1,22 @@
+consider making ui separate react app
+
+make timer
+pause timer button/timer controls
+
+make animations/graphics
+transport vote description
+
+make vote object/descriptions in backend
+mark vote object if already completed
+
+vote picking what vs what
+
+transmit all vote data to frontend to allow for custom/random picking
+
+custom avghans raid command force button
+
+
+add ui
+custom minecraft commands: avghans bitmap art / fireworks
+make commands work
+add clone commands build into worlds etc
