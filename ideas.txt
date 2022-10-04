@@ -1,0 +1,38 @@
+-auto random
+-weighted random
+-add animations to front end? maybe use obs chromakeying
+
+-----  more medium power ones ----- 
+1 min of 5s tnt ever 15 seconds
+iron armor
+less strong bow
+
+
+
+----- stronger ones ----- 
+gaggle of skeles
+flying creepas
+spawn a raid
+kill raiders
+
+
+
+CONCEPT 2
+
+main idea will be to reach the bottom
+every 15 mins I am teleported to the top
+
+chat votes to tp me up to x amounts of blocks
+spawn hoards in arenas
+lock me in a room with a wither
+tnt follow
+--some of the previous ideas--
+and more++
+
+90s predictions, but the rarity is weighted
+to make it harder to tp me fully back without a boss or something
+(1/10 maybe?)
+
+CHECKPOINT vote
+spawns a lil checkpoint command block area
+
