@@ -1,0 +1,35 @@
+.votingMachine {
+background-color: white;
+width: 1100px;
+height: 400px;
+border-radius: 20px;
+margin: 20px;
+}
+
+.voteDescription {
+  margin: 10px;
+  width: 40%;
+}
+
+.right{
+  text-align: right;
+}
+.voteHow {
+  font-weight: 800;
+  font-size: 35px;
+}
+
+.voteTitle {
+  font-weight: 500;
+  font-size: 40px;
+}
+
+.voteHolder {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  width: 1000px;
+  height: 200px;
+  margin: 0px auto;
+}
+

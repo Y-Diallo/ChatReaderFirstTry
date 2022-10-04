@@ -1,0 +1,47 @@
+.votingMachine {
+  background-color: white;
+  width: 550px;
+  height: 200px;
+  border-radius: 20px;
+  margin: 20px;
+  }
+  
+.voteDescription {
+  margin: 10px;
+  width: 45%;
+}
+
+.right{
+  text-align: right;
+}
+.voteHow {
+  font-weight: 800;
+  font-size: 20px;
+}
+
+.voteTitle {
+  font-weight: 500;
+  font-size: 25px;
+}
+
+.voteHolder {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  width: 500px;
+  height: 100px;
+  margin: 0px auto;
+}
+
+.controls {
+  background: white;
+  height: 100px;
+  width: 600px;
+  margin: 20px;
+  padding: 10px;
+  border-radius: 10px;
+}
+.controls select {
+  width: 300px;
+  height: 30px;
+}
