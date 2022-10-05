@@ -6,28 +6,36 @@
 1 min of 5s tnt ever 15 seconds
 iron armor
 less strong bow
-
+poison
 
 
 ----- stronger ones ----- 
-gaggle of skeles
-flying creepas
-spawn a raid
+gaggle of skeles  hoard
+flying creepas  hoard
+spawn raiders  hoard
 kill raiders
+watchers
 
-
-
+-- funni ones
+turtle squaaaa
+fish fumble
+strider + wardped fungus on a stick + saddle?
 CONCEPT 2
 
 main idea will be to reach the bottom
 every 15 mins I am teleported to the top
-
+bottom of the world is -60
 chat votes to tp me up to x amounts of blocks
 spawn hoards in arenas
 lock me in a room with a wither
 tnt follow
 --some of the previous ideas--
 and more++
+
+RULES:
+no digging straight down\
+IF I FAIL I HAVE TO DO A STREAM OF PURE NEGATIVE DEBUFFS LIKE HOARDS
+CLEAR INV SPAWNING BOSSES this is happening on a regualr basis
 
 90s predictions, but the rarity is weighted
 to make it harder to tp me fully back without a boss or something
@@ -36,3 +44,6 @@ to make it harder to tp me fully back without a boss or something
 CHECKPOINT vote
 spawns a lil checkpoint command block area
 
+CLEANUP ROOM
+PRACTICE STAKES
+START

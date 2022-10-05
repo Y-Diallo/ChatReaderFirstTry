@@ -15,11 +15,27 @@ var minecraftServerProcess = childProcess.spawn('java', [
     'nogui'
 ]);
 // Log server output to stdout
-function log(data) {
-    process.stdout.write(data.toString());
+let ws;
+let log = function(data) {
+    let output = data.toString();
+    if(output.includes("[Server thread/INFO]: yman234 has the following entity data:")){
+        let posOutput = output.split(" ");
+        let pos = posOutput[posOutput.length-1];
+        let posY = Math.round(parseInt(pos.slice(0,pos.length-1)));
+
+        if(ws){
+            ws.sendUTF(JSON.stringify({
+                type: "positionView",
+                posY: posY
+            }));
+        }
+    }else {
+        process.stdout.write(output);
+    }
 }
 minecraftServerProcess.stdout.on('data', log);
 minecraftServerProcess.stderr.on('data', log);
+
 const oneTime = (command)=>{
     minecraftServerProcess.stdin.write(command);
 }
@@ -29,6 +45,7 @@ let voters = [];
 let votes = [0,0]
 let selectedCommands = [];
 let seconds = 5*60;
+let autoRandom = false;
 
 const runCommands = (command) => {
     console.log("running command", command);
@@ -54,11 +71,11 @@ const runCommands = (command) => {
         for(let timesRan = 0; timesRan<totalRuns; timesRan++){
             if(timesRan< voters.length){
                 for(let zombieToViewer = 0; zombieToViewer < totalRuns/voters.length ; zombieToViewer++){
-                    oneTime(`/execute at yman234 run summon ${command.command} ~${Math.floor(Math.random()*7)} ~2 ~${Math.floor(Math.random()*7)} {CustomName:'{"text":"${voters[timesRan]}"}'}\n`);
+                    oneTime(`/execute at yman234 run summon ${command.command} ^${Math.floor(Math.random()*7)} ^2 ^${Math.floor(Math.random()*7)} {CustomName:'{"text":"${voters[timesRan]}"}'}\n`);
                     totalRuns--;
                 }
             }else{
-                oneTime(`/execute at yman234 run summon ${command.command} ~${Math.floor(Math.random()*7)} ~2 ~${Math.floor(Math.random()*7)} {CustomName:'{"text":"ybotman"}'}\n`);
+                oneTime(`/execute at yman234 run summon ${command.command} ^${Math.floor(Math.random()*7)} ^2 ^${Math.floor(Math.random()*7)} {CustomName:'{"text":"ybotman"}'}\n`);
             }
         }
     }else if(command.special){
@@ -69,9 +86,29 @@ const runCommands = (command) => {
             oneTime('/give @p minecraft:netherite_chestplate{Enchantments:[{id:protection,lvl:255},{id:thorns,lvl:255},{id:mending,lvl:255},{id:unbreaking,lvl:255}]}\n');
             oneTime('/give @p minecraft:netherite_leggings{Enchantments:[{id:protection,lvl:255},{id:thorns,lvl:255},{id:mending,lvl:255},{id:unbreaking,lvl:255}]}\n');
             oneTime('/give @p minecraft:netherite_boots{Enchantments:[{id:protection,lvl:255},{id:thorns,lvl:255},{id:mending,lvl:255},{id:unbreaking,lvl:255}]}\n');
+        }else if(command.name === "Iron Armor"){
+            oneTime('/give @p minecraft:netherite_helmet{Enchantments:[{id:protection,lvl:255},{id:thorns,lvl:255},{id:unbreaking,lvl:255}]}\n');
+            oneTime('/give @p minecraft:netherite_chestplate{Enchantments:[{id:protection,lvl:255},{id:thorns,lvl:255},{id:mending,lvl:255},{id:unbreaking,lvl:255}]}\n');
+            oneTime('/give @p minecraft:netherite_leggings{Enchantments:[{id:protection,lvl:255},{id:thorns,lvl:255},{id:mending,lvl:255},{id:unbreaking,lvl:255}]}\n');
+            oneTime('/give @p minecraft:netherite_boots{Enchantments:[{id:protection,lvl:255},{id:thorns,lvl:255},{id:mending,lvl:255},{id:unbreaking,lvl:255}]}\n');
         }else if(command.name === "Bumpin Bow"){
             oneTime(command.command);
             oneTime("/give yman234 arrow 64\n");
+        }else if(command.name === "Ok Bow"){
+            oneTime(command.command);
+            oneTime("/give yman234 arrow 64\n");
+        }else if(command.name === "Pokey Bow"){
+            oneTime(command.command);
+            oneTime("/give yman234 arrow 64\n");
+        }else if(command.name === "Tnt Chase"){
+            oneTime(`/fill 6 63 3 6 63 3 minecraft:redstone_wire\n`);
+            oneTime(command.command);
+            setTimeout(function() { //remove redstone block
+                oneTime('/fill 6 63 1 6 63 1 minecraft:air\n');
+            },500);//consider saying when its over in game
+            setTimeout(function() { //remove redstone wire
+                oneTime(`/fill 6 63 3 6 63 3 minecraft:air\n`);
+            },1000*60*1.5);//consider saying when its over in game
         }else {
             console.log("unexpected", command);
         }
@@ -83,6 +120,17 @@ const runCommands = (command) => {
     }
 }
 
+//update position
+let updateTimeout;
+let updateCheck = false;
+const updatePosition = () => {
+    if(updateCheck){
+        oneTime("/data get entity yman234 Pos[1]\n");
+        updateTimeout = setTimeout(()=>updatePosition() ,1000);//change to every 10 seconds
+    }else if(updateTimeout){
+        clearTimeout(updateTimeout);
+    }
+}
 
 
 //specific minecraft commands
@@ -155,7 +203,7 @@ function originIsAllowed(origin) {
     // put logic here to detect whether the specified origin is allowed.
     return true;
 }
-let ws;
+
 voteServer.on('request', function(request) {
     if (!originIsAllowed(request.origin)) {
       // Make sure we only accept requests from an allowed origin
@@ -176,6 +224,39 @@ voteServer.on('request', function(request) {
             connection.sendUTF(message.utf8Data);
             if(messageData.mode && messageData.mode === "timeEnd"){
                 runCommands(messageData.winner);
+                console.log(autoRandom);
+                if (autoRandom) {
+                    //randomize commands
+                    let max = commands.length-1;
+                    let min = 0;
+                    let raritySelect = Math.floor(Math.random() * (10 - 1 + 1) + 1);
+                    let random1;
+                    let random2;
+                    let highRare = 23;
+                    let lowRare = 12;
+                    if(raritySelect > 7){//super rare
+                        random1 = Math.floor(Math.random() * (max - (min+highRare) + 1) + min);
+                        random2 = Math.floor(Math.random() * (max - (min+highRare) + 1) + min);
+                    }else if(raritySelect >4){//less rare
+                        random1 = Math.floor(Math.random() * ((highRare-1) - (min+lowRare) + 1) + min);
+                        random2 = Math.floor(Math.random() * ((highRare-1) - (min+lowRare) + 1) + min);
+                    }else{
+                        random1 = Math.floor(Math.random() * ((lowRare-1) - min + 1) + min);
+                        random2 = Math.floor(Math.random() * ((lowRare-1) - min + 1) + min);
+                    }
+                    selectedCommands = [commands[random1],commands[random2]];
+                    console.log("randomized new commands, updating ui");
+                    voters = [];//empty voters to allow new votes in new poll
+                    votes = [0,0];
+                    ws.sendUTF(JSON.stringify({
+                        type: "view",
+                        selectedCommands:selectedCommands,
+                        votes: votes,
+                        voter: "",
+                        seconds: seconds,
+                        newDetails: true
+                    }));
+                }
             }
         }
         // else if (message.type === 'binary') {
@@ -249,8 +330,15 @@ commandServer.on('request', function(request) {
                 cws.sendUTF(JSON.stringify({type: "command",
                     commands: commands
                 }));
-            }
-            else if(messageData.mode && messageData.mode === "avghans"){
+            }else if(messageData.mode && messageData.mode === "autoRandom"){
+                autoRandom = messageData.state;
+                seconds = messageData.seconds;
+            }else if(messageData.mode && messageData.mode === "updatePosition"){
+                if(updateCheck !== messageData.state){//if the states are the same then this is meaningless
+                    updateCheck = messageData.state;
+                    updatePosition();
+                }
+            }else if(messageData.mode && messageData.mode === "avghans"){
                 oneTime('/execute run tp yman234 9824 109 -57\n');
             }
         }

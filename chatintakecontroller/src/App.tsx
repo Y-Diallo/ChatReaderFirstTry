@@ -1,7 +1,8 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { useTimer } from 'react-timer-hook';
 import './App.css';
 import Timer from './Timer';
+const ws = new WebSocket('ws://localhost:7070/', 'echo-protocol');
 
 function App() {
   interface wsInboundCommandMessageData{
@@ -27,30 +28,34 @@ function App() {
   currentTimeLeft.current.setSeconds(currentTimeLeft.current.getSeconds() + 5);
   const voters = useRef<string[]>([]);
   const indexNumber = useRef(0);
-
-  const ws = new WebSocket('ws://localhost:7070/', 'echo-protocol');
-  ws.onopen = () => {
-    // on connecting, do nothing but log it to the console
-    console.log('connected');
-  }
-
-  ws.onmessage = evt => {
-    // listen to data sent from the websocket server
-    const message = JSON.parse(evt.data);
-    console.log("message from server", message);
-    if(message.type && (message.type === 'command')){
-      const messageData : wsInboundCommandMessageData = message;
-      console.log("message from server",messageData);
-      setCommands(messageData.commands);
+  useEffect(() => {
+    ws.onopen = () => {
+      // on connecting, do nothing but log it to the console
+      console.log('connected');
     }
-  }
-
-  ws.onclose = () => {
-    console.log('disconnected');
-    // automatically try to reconnect on connection loss
-  }
+  
+    ws.onmessage = evt => {
+      // listen to data sent from the websocket server
+      const message = JSON.parse(evt.data);
+      console.log("message from server", message);
+      if(message.type && (message.type === 'command')){
+        const messageData : wsInboundCommandMessageData = message;
+        console.log("message from server",messageData);
+        setCommands(messageData.commands);
+      }
+    }
+  
+    ws.onclose = () => {
+      console.log('disconnected');
+      // automatically try to reconnect on connection loss
+    }
+  }, []);
+  
 
   const submitUpdate = ()=>{
+    if(!(selectedCommands.current[0]&&selectedCommands.current[1]) || commands.length === 0){//incase of no selected commands
+      return;
+    }
     const outBoundMessage : wsOutboundCommandMessageData = {
       mode: "command",
       seconds : newTime,
@@ -60,6 +65,9 @@ function App() {
   }
 
   const submitRandomUpdate = ()=>{
+    if(commands.length === 0){//incase of no selected commands
+      return;
+    }
     let max = commands.length-1;
     let min = 0;
     let random1 = Math.floor(Math.random() * (max - min + 1) + min);
@@ -73,6 +81,9 @@ function App() {
   }
 
   const submitOneRandomUpdate = ()=>{
+    if(commands.length === 0){//incase of no selected commands
+      return;
+    }
     let max = commands.length-1;
     let min = 0;
     let random1 = Math.floor(Math.random() * (max - min + 1) + min);
@@ -90,11 +101,26 @@ function App() {
     };
     ws.send(JSON.stringify(outBoundMessage));
   }
-  
+
+  const autoRandom =(e: any)=>{
+    const outBoundMessage = {
+      mode: "autoRandom",
+      state: e.target.id === "on" ? true:false,
+      seconds : newTime,
+    };
+    ws.send(JSON.stringify(outBoundMessage));
+  }
+  const updatePosition =(e: any)=>{
+    const outBoundMessage = {
+      mode: "updatePosition",
+      state: e.target.id === "on" ? true:false,
+    };
+    ws.send(JSON.stringify(outBoundMessage));
+  }
   return (
     <>
       <div className="controls">
-        <select  onChange={(e) => {
+        <select onChange={(e) => {
           indexNumber.current = parseInt(e.target.value);
           selectedCommands.current[0] = commands[parseInt(e.target.value)];
           }}>
@@ -110,14 +136,24 @@ function App() {
             return <option key={index*2} value={index}>{name}</option>;
           })}
         </select>
-        <input type="text" value={newTime} onChange={(e) => setNewTime(parseInt(e.target.value))}/>
+        <input type="text" value={newTime} onChange={(e) => {
+          if(parseInt(e.target.value)){
+            setNewTime(parseInt(e.target.value))
+          }else {
+            setNewTime(0);
+          }
+          }}/>
         <input type="button" onClick={() => submitUpdate()} value="Submit"/>
         <input type="button" onClick={() => ws.send(JSON.stringify({mode:"requestCommands"}))} value="Request Commands"/>
-        <input type="button" onClick={() => avghans()} value="Avghans"/>
       </div>
       <div style={{margin: "20px", padding: "20px", borderRadius:"10px", background: "white",width:"500px", height:"100px"}}>
         <input type="button" onClick={() => submitRandomUpdate()} value="Random"/>
         <input type="button" onClick={() => submitOneRandomUpdate()} value="Second command Random"/>
+        <input type="button" onClick={() => avghans()} value="Avghans"/>
+        <input id="on" type="button" onClick={(e) => autoRandom(e)} value="autoRandom on"/>
+        <input id="off" type="button" onClick={(e) => autoRandom(e)} value="autoRandom off"/>
+        <input id="on" type="button" onClick={(e) => updatePosition(e)} value="updatePosition on"/>
+        <input id="off" type="button" onClick={(e) => updatePosition(e)} value="updatePosition off"/>
       </div>
     </>
   );
