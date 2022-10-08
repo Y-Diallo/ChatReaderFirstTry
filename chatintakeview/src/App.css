@@ -3,7 +3,6 @@
   color: #878ECD;
   width: 1100px;
   height: 350px;
-  border-radius: 20px;
   margin: 20px;
   font-family: Montserrat, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
@@ -60,7 +59,6 @@
   font-family: Montserrat, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   width: 150px;
   height: 575px;
-  border-radius: 20px;
   margin-top: 100px;
   margin-left: 975px;
 }

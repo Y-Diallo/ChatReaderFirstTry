@@ -237,7 +237,7 @@ voteServer.on('request', function(request) {
                     if(raritySelect > 7){//super rare
                         random1 = Math.floor(Math.random() * (max - (min+highRare) + 1) + min);
                         random2 = Math.floor(Math.random() * (max - (min+highRare) + 1) + min);
-                    }else if(raritySelect >4){//less rare
+                    }else if(raritySelect > 4){//less rare
                         random1 = Math.floor(Math.random() * ((highRare-1) - (min+lowRare) + 1) + min);
                         random2 = Math.floor(Math.random() * ((highRare-1) - (min+lowRare) + 1) + min);
                     }else{
@@ -371,7 +371,7 @@ const addVote = (vote, name)=>{ //expect votes in range [1,2]
 
 const WebSocketClient = require('websocket').client;
 const client = new WebSocketClient();
-const channel = '#ybotman';//'#ymanishere';  // Replace with your channel.
+const channel = '#ymanishere';//'#ymanishere';  // Replace with your channel.
 const account = 'ybotman';   // Replace with the account the bot runs as
 const minecraftUsername = "yman234";
 
