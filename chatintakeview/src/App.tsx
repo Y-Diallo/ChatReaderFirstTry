@@ -14,7 +14,9 @@ function App() {
   }
   interface wsInboundPositionViewMessageData{
     type : string,
-    posY: number
+    posX: number,
+    posY: number,
+    posZ: number,
   }
   interface commandDetails {
     command : string,
@@ -30,7 +32,7 @@ function App() {
   const votes1 = useRef(1);
   const votes2 = useRef(1);
   const [totalVotes,setTotalVotes] = useState(2);
-  const [position, setPosition] = useState(110);
+  const [position, setPosition] = useState([500,110,500]);
   const dateInital = useRef(new Date());// 1 second
   const timeoutHold = useRef<NodeJS.Timer>();
   dateInital.current.setSeconds(dateInital.current.getSeconds() + 5);
@@ -64,12 +66,13 @@ function App() {
         setTotalVotes(messageData.votes[0]+messageData.votes[1]);
       }else if(message.type && 'positionView' === message.type){
         const messageData : wsInboundPositionViewMessageData = message;
+        let posX = messageData.posX+500;
         let posY = messageData.posY+60;
-        console.log("messageData.posY", messageData.posY);
         //bedrock at -60, floor around 60, adjust to make bedrock 0
+        let posZ = messageData.posZ+500;
         posY = posY < 0 ? 0 : posY;
-        console.log("posY", posY);
-        setPosition(posY);
+        console.log("position [x,y,z]", [posX,posY,posZ]);
+        setPosition([posX,posY,posZ]);
       }
     }
     ws.onclose = () => {
@@ -134,18 +137,34 @@ function App() {
         </span>
       </div>
       <div className="positionDisplay">
-        <span className='blocksLeft'><span>{position}</span><br/>Blocks<br/>TO GO</span>
+        <span className='blocksLeft'><span>{position[1]}</span><br/>Blocks<br/>TO GO</span>
         <div className="positionBar">
           <span className="positionDone" 
             style={{
             transition: "0.3s",
-            height: position >= 120? "0":(position === 0? "100":100*((120-position)/120) + "%"),
+            height: position[1] >= 120? "0":(position[1] === 0? "100":100*((120-position[1])/120) + "%"),
             background:"#878ECD"
           }}></span>
           <span className="positionIncomplete" 
             style={{
             transition: "0.3s",
-            height: position >= 120? "100":(position === 0? "0": 100*(position/120) + "%"),
+            height: position[1] >= 120? "100":(position[1] === 0? "0": 100*(position[1]/120) + "%"),
+          }}></span>
+        </div>
+      </div>
+      <div className="positionDisplay">
+        <span className='blocksLeft'><span>{10500-position[0]}</span><br/>Blocks<br/>TO GO</span>
+        <div className="positionBar">
+          <span className="positionDone" 
+            style={{
+            transition: "0.3s",
+            width: position[0] >= 10500? "100":(position[0] === 500? "0": 100*(position[0]/10500) + "%"),
+            background:"#878ECD"
+          }}></span>
+          <span className="positionIncomplete" 
+            style={{
+            transition: "0.3s",
+            width: position[0] >= 10500? "0":(position[0] === 500? "100":100*((10500-position[0])/10500) + "%"),
           }}></span>
         </div>
       </div>

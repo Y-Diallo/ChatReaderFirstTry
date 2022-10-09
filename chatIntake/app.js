@@ -19,14 +19,18 @@ let ws;
 let log = function(data) {
     let output = data.toString();
     if(output.includes("[Server thread/INFO]: yman234 has the following entity data:")){
-        let posOutput = output.split(" ");
-        let pos = posOutput[posOutput.length-1];
-        let posY = Math.round(parseInt(pos.slice(0,pos.length-1)));
+        let pos = output.slice(62,output.length-1);
+        pos = pos.split(",");
+        let posX = Math.round(parseInt(pos[0].trim().slice(0,posX.length-1)));
+        let posY = Math.round(parseInt(pos[1].trim().slice(0,posY.length-1)));
+        let posZ = Math.round(parseInt(pos[2].trim().slice(0,posZ.length-1)));
 
         if(ws){
             ws.sendUTF(JSON.stringify({
                 type: "positionView",
-                posY: posY
+                posX: posX,
+                posY: posY,
+                posZ: posZ
             }));
         }
     }else {
@@ -203,7 +207,7 @@ function originIsAllowed(origin) {
     // put logic here to detect whether the specified origin is allowed.
     return true;
 }
-
+const random = require('random');
 voteServer.on('request', function(request) {
     if (!originIsAllowed(request.origin)) {
       // Make sure we only accept requests from an allowed origin
@@ -236,13 +240,13 @@ voteServer.on('request', function(request) {
                     let lowRare = 12;
                     if(raritySelect > 7){//super rare
                         random1 = Math.floor(Math.random() * (max - (min+highRare) + 1) + min);
-                        random2 = Math.floor(Math.random() * (max - (min+highRare) + 1) + min);
+                        random2 = random.int(max, lowRare);
                     }else if(raritySelect > 4){//less rare
                         random1 = Math.floor(Math.random() * ((highRare-1) - (min+lowRare) + 1) + min);
-                        random2 = Math.floor(Math.random() * ((highRare-1) - (min+lowRare) + 1) + min);
+                        random2 = random.int(highRare, lowRare);
                     }else{
                         random1 = Math.floor(Math.random() * ((lowRare-1) - min + 1) + min);
-                        random2 = Math.floor(Math.random() * ((lowRare-1) - min + 1) + min);
+                        random2 = random.int(lowRare, min);
                     }
                     selectedCommands = [commands[random1],commands[random2]];
                     console.log("randomized new commands, updating ui");
