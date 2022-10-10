@@ -19,18 +19,24 @@ let ws;
 let log = function(data) {
     let output = data.toString();
     if(output.includes("[Server thread/INFO]: yman234 has the following entity data:")){
-        let pos = output.slice(62,output.length-1);
+        let pos = output.slice(73,output.length-3);
+        console.log(pos);
         pos = pos.split(",");
-        let posX = Math.round(parseInt(pos[0].trim().slice(0,posX.length-1)));
-        let posY = Math.round(parseInt(pos[1].trim().slice(0,posY.length-1)));
-        let posZ = Math.round(parseInt(pos[2].trim().slice(0,posZ.length-1)));
+        console.log(pos);
+        let posX = pos[0].trim();
+        let posY = pos[1].trim();
+        let posZ = pos[2].trim();
+        console.log("position [x,y,z]", [posX,posY,posZ]);
+        posX = Math.round(parseInt(posX.slice(0,posX.length-1)));
+        posY = Math.round(parseInt(posY.slice(0,posY.length-1)));
+        posZ = Math.round(parseInt(posZ.slice(0,posZ.length-1)));
 
         if(ws){
             ws.sendUTF(JSON.stringify({
                 type: "positionView",
                 posX: posX,
                 posY: posY,
-                posZ: posZ
+                posZ: posZ,
             }));
         }
     }else {
@@ -129,7 +135,7 @@ let updateTimeout;
 let updateCheck = false;
 const updatePosition = () => {
     if(updateCheck){
-        oneTime("/data get entity yman234 Pos[1]\n");
+        oneTime("/data get entity yman234 Pos\n");
         updateTimeout = setTimeout(()=>updatePosition() ,1000);//change to every 10 seconds
     }else if(updateTimeout){
         clearTimeout(updateTimeout);
@@ -236,8 +242,8 @@ voteServer.on('request', function(request) {
                     let raritySelect = Math.floor(Math.random() * (10 - 1 + 1) + 1);
                     let random1;
                     let random2;
-                    let highRare = 23;
-                    let lowRare = 12;
+                    let highRare = 14;
+                    let lowRare = 10;
                     if(raritySelect > 7){//super rare
                         random1 = Math.floor(Math.random() * (max - (min+highRare) + 1) + min);
                         random2 = random.int(max, lowRare);

@@ -66,10 +66,10 @@ function App() {
         setTotalVotes(messageData.votes[0]+messageData.votes[1]);
       }else if(message.type && 'positionView' === message.type){
         const messageData : wsInboundPositionViewMessageData = message;
-        let posX = messageData.posX+500;
+        let posX = messageData.posX;
         let posY = messageData.posY+60;
         //bedrock at -60, floor around 60, adjust to make bedrock 0
-        let posZ = messageData.posZ+500;
+        let posZ = messageData.posZ;
         posY = posY < 0 ? 0 : posY;
         console.log("position [x,y,z]", [posX,posY,posZ]);
         setPosition([posX,posY,posZ]);
@@ -136,38 +136,40 @@ function App() {
           </span>
         </span>
       </div>
-      <div className="positionDisplay">
-        <span className='blocksLeft'><span>{position[1]}</span><br/>Blocks<br/>TO GO</span>
-        <div className="positionBar">
-          <span className="positionDone" 
-            style={{
-            transition: "0.3s",
-            height: position[1] >= 120? "0":(position[1] === 0? "100":100*((120-position[1])/120) + "%"),
-            background:"#878ECD"
-          }}></span>
-          <span className="positionIncomplete" 
-            style={{
-            transition: "0.3s",
-            height: position[1] >= 120? "100":(position[1] === 0? "0": 100*(position[1]/120) + "%"),
-          }}></span>
+      <span className='allPosition'>
+        <div className="positionDisplay">
+          <span className='blocksLeft'><span>{position[1]}</span><br/>Blocks<br/>TO GO</span>
+          <div className="positionBar">
+            <span className="positionDone" 
+              style={{
+              transition: "0.3s",
+              height: position[1] >= 120? "0":(position[1] === 0? "100":100*((120-position[1])/120) + "%"),
+              background:"#878ECD"
+            }}></span>
+            <span className="positionIncomplete" 
+              style={{
+              transition: "0.3s",
+              height: position[1] >= 120? "100":(position[1] === 0? "0": 100*(position[1]/120) + "%"),
+            }}></span>
+          </div>
         </div>
-      </div>
-      <div className="positionDisplay">
-        <span className='blocksLeft'><span>{10500-position[0]}</span><br/>Blocks<br/>TO GO</span>
-        <div className="positionBar">
-          <span className="positionDone" 
-            style={{
-            transition: "0.3s",
-            width: position[0] >= 10500? "100":(position[0] === 500? "0": 100*(position[0]/10500) + "%"),
-            background:"#878ECD"
-          }}></span>
-          <span className="positionIncomplete" 
-            style={{
-            transition: "0.3s",
-            width: position[0] >= 10500? "0":(position[0] === 500? "100":100*((10500-position[0])/10500) + "%"),
-          }}></span>
+        <div className="positionDisplay" style={{width:"200px"}}>
+          <span className='blocksLeft'style={{width:"200px"}}><span style={{width:"200px"}}>{10000-position[0]}</span><br/>Blocks<br/>TO GO</span>
+          <div className="positionBar">
+            <span className="positionDone" 
+              style={{
+              transition: "0.3s",
+              height: position[0] >= 10000? "100%":(position[0] === 0? "0": 100*(position[0]/10000) + "%"),
+              background:"#878ECD"
+            }}></span>
+            <span className="positionIncomplete" 
+              style={{
+              transition: "0.3s",
+              height: position[0] >= 10000? "0%":(position[0] === 0? "100":100*((10000-position[0])/10000) + "%"),
+            }}></span>
+          </div>
         </div>
-      </div>
+      </span>
       {/* <button onClick={() => ws.send(JSON.stringify({something:"hi"}))}>send hi</button> */}
       {/* <button onClick={() => startTimer(100)}>startTimer</button> */}
     </>
