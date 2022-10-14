@@ -7,6 +7,10 @@ const commands = require('./minecraftCommands');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 const childProcess = require('child_process');
+
+var viewProcess = childProcess.exec('cd ../chatintakeview/ && npm start');
+var controlProcess = childProcess.exec('cd ../chatintakecontroller/ && npm start');
+
 var minecraftServerProcess = childProcess.spawn('java', [
     '-Xmx1024M',
     '-Xms1024M',
