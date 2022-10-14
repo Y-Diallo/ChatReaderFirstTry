@@ -12,8 +12,8 @@ var viewProcess = childProcess.exec('cd ../chatintakeview/ && npm start');
 var controlProcess = childProcess.exec('cd ../chatintakecontroller/ && npm start');
 
 var minecraftServerProcess = childProcess.spawn('java', [
-    '-Xmx512M',
-    '-Xms512M',
+    '-Xmx1024M',
+    '-Xms1024M',
     '-jar',
     'server.jar',
     'nogui'
