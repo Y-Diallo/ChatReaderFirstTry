@@ -4,7 +4,8 @@ logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-/chatIntake/secret.js
+# /chatIntake/secret.js
+# to be moved to aws secret manager
 # Runtime data
 pids
 *.pid
