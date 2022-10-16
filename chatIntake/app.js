@@ -11,73 +11,73 @@ const childProcess = require('child_process');
 var viewProcess = childProcess.exec('cd ../chatintakeview/ && npm start');
 var controlProcess = childProcess.exec('cd ../chatintakecontroller/ && npm start');
 var http = require('http');
-const httpProxy = require("http-proxy");
+// const httpProxy = require("http-proxy");
 
-var proxy_controller = new httpProxy.createServer({
-  target: "http://localhost:3001/",
-  secure: false,
-});
+// var proxy_controller = new httpProxy.createServer({
+//   target: "http://localhost:3001/",
+//   secure: false,
+// });
 
-var proxy_view = new httpProxy.createServer({
-  target: "http://localhost:3000/",
-  secure: false,
-});
-const ec2IP = "44.200.228.205";
-http.createServer(  
-    {
-    //   key: fs.readFileSync("server.key"),
-    //   cert: fs.readFileSync("server.cert"),
-    //   ca: fs.readFileSync("serverCA.pem"),
-    },
-    function (req, res) {
-      try {
-        if (req.headers.host === ec2IP) {
-          if(req.url.includes("/controller"))
-          {
-            proxy_controller.proxyRequest(req, res);
-            proxy_controller.on("response", (remoteRes) => {
-              res.writeHead(remoteRes.statusCode, remoteRes.headers);
-              remoteRes.pipe(res);
-            });
-            proxy_controller.on("error", function (err, req, res) {
-              if (err) console.log(err);
-              res.writeHead(500);
-              res.end("Oops, something went very wrong...");
-            });
-          } else {//either controller or view
-          req.url = req.url.replace('/view', '/');
-          proxy_view.proxyRequest(req, res);
-          proxy_view.on("response", (remoteRes) => {
-            res.writeHead(remoteRes.statusCode, remoteRes.headers);
-            remoteRes.pipe(res);
-          });
-          proxy_view.on("error", function (err, req, res) {
-            if (err) console.log(err);
-            res.writeHead(500);
-            res.end("Oops, something went very wrong...");
-          });
-         }
-        } 
-        // else if (req.headers.host === "SUBDOMAIN.DOMAIN.COM") {
-        //   proxy_view.proxyRequest(req, res);
-        //   proxy_view.on("response", (remoteRes) => {
-        //     res.writeHead(remoteRes.statusCode, remoteRes.headers);
-        //     remoteRes.pipe(res);
-        //   });
-        //   proxy_view.on("error", function (err, req, res) {
-        //     if (err) console.log(err);
-        //     res.writeHead(500);
-        //     res.end("Oops, something went very wrong...");
-        //   });
-        // }
-      } catch (error) {
-          console.log(error)
-      }
-    }
-)
-.listen(80, function () {
-    console.log("App is running on the port", 80);
-});
+// var proxy_view = new httpProxy.createServer({
+//   target: "http://localhost:3000/",
+//   secure: false,
+// });
+// const ec2IP = "44.200.228.205";
+// http.createServer(  
+//     {
+//     //   key: fs.readFileSync("server.key"),
+//     //   cert: fs.readFileSync("server.cert"),
+//     //   ca: fs.readFileSync("serverCA.pem"),
+//     },
+//     function (req, res) {
+//       try {
+//         if (req.headers.host === ec2IP) {
+//           if(req.url.includes("/controller"))
+//           {
+//             proxy_controller.proxyRequest(req, res);
+//             proxy_controller.on("response", (remoteRes) => {
+//               res.writeHead(remoteRes.statusCode, remoteRes.headers);
+//               remoteRes.pipe(res);
+//             });
+//             proxy_controller.on("error", function (err, req, res) {
+//               if (err) console.log(err);
+//               res.writeHead(500);
+//               res.end("Oops, something went very wrong...");
+//             });
+//           } else {//either controller or view
+//           req.url = req.url.replace('/view', '/');
+//           proxy_view.proxyRequest(req, res);
+//           proxy_view.on("response", (remoteRes) => {
+//             res.writeHead(remoteRes.statusCode, remoteRes.headers);
+//             remoteRes.pipe(res);
+//           });
+//           proxy_view.on("error", function (err, req, res) {
+//             if (err) console.log(err);
+//             res.writeHead(500);
+//             res.end("Oops, something went very wrong...");
+//           });
+//          }
+//         } 
+//         // else if (req.headers.host === "SUBDOMAIN.DOMAIN.COM") {
+//         //   proxy_view.proxyRequest(req, res);
+//         //   proxy_view.on("response", (remoteRes) => {
+//         //     res.writeHead(remoteRes.statusCode, remoteRes.headers);
+//         //     remoteRes.pipe(res);
+//         //   });
+//         //   proxy_view.on("error", function (err, req, res) {
+//         //     if (err) console.log(err);
+//         //     res.writeHead(500);
+//         //     res.end("Oops, something went very wrong...");
+//         //   });
+//         // }
+//       } catch (error) {
+//           console.log(error)
+//       }
+//     }
+// )
+// .listen(4000, function () {
+//     console.log("App is running on the port", 4000);
+// });
 
 var minecraftServerProcess = childProcess.spawn('java', [
     '-Xmx1024M',
