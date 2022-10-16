@@ -10,6 +10,74 @@ const childProcess = require('child_process');
 
 var viewProcess = childProcess.exec('cd ../chatintakeview/ && npm start');
 var controlProcess = childProcess.exec('cd ../chatintakecontroller/ && npm start');
+var http = require('http');
+const httpProxy = require("http-proxy");
+
+var proxy_controller = new httpProxy.createServer({
+  target: "http://localhost:3001/",
+  secure: false,
+});
+
+var proxy_view = new httpProxy.createServer({
+  target: "http://localhost:3000/",
+  secure: false,
+});
+const ec2IP = "44.200.228.205";
+http.createServer(  
+    {
+    //   key: fs.readFileSync("server.key"),
+    //   cert: fs.readFileSync("server.cert"),
+    //   ca: fs.readFileSync("serverCA.pem"),
+    },
+    function (req, res) {
+      try {
+        if (req.headers.host === ec2IP) {
+          if(req.url.includes("/controller"))
+          {
+            proxy_controller.proxyRequest(req, res);
+            proxy_controller.on("response", (remoteRes) => {
+              res.writeHead(remoteRes.statusCode, remoteRes.headers);
+              remoteRes.pipe(res);
+            });
+            proxy_controller.on("error", function (err, req, res) {
+              if (err) console.log(err);
+              res.writeHead(500);
+              res.end("Oops, something went very wrong...");
+            });
+          } else {//either controller or view
+          req.url = req.url.replace('/view', '/');
+          proxy_view.proxyRequest(req, res);
+          proxy_view.on("response", (remoteRes) => {
+            res.writeHead(remoteRes.statusCode, remoteRes.headers);
+            remoteRes.pipe(res);
+          });
+          proxy_view.on("error", function (err, req, res) {
+            if (err) console.log(err);
+            res.writeHead(500);
+            res.end("Oops, something went very wrong...");
+          });
+         }
+        } 
+        // else if (req.headers.host === "SUBDOMAIN.DOMAIN.COM") {
+        //   proxy_view.proxyRequest(req, res);
+        //   proxy_view.on("response", (remoteRes) => {
+        //     res.writeHead(remoteRes.statusCode, remoteRes.headers);
+        //     remoteRes.pipe(res);
+        //   });
+        //   proxy_view.on("error", function (err, req, res) {
+        //     if (err) console.log(err);
+        //     res.writeHead(500);
+        //     res.end("Oops, something went very wrong...");
+        //   });
+        // }
+      } catch (error) {
+          console.log(error)
+      }
+    }
+)
+.listen(80, function () {
+    console.log("App is running on the port", 80);
+});
 
 var minecraftServerProcess = childProcess.spawn('java', [
     '-Xmx1024M',
@@ -148,52 +216,51 @@ const updatePosition = () => {
 
 
 //specific minecraft commands
-var app = express();
+// var app = express();
 
-app.use(logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+// app.use(logger('dev'));
+// app.use(express.json());
+// app.use(express.urlencoded({ extended: false }));
+// app.use(cookieParser());
+// app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
-
-
+// app.use('/', indexRouter);
+// app.use('/users', usersRouter);
 
 
-app.use('/run', (req, res)=>{
 
-    // childProcess.exec("cd minecraft && java -Xmx1024M -Xms1024M -jar server.jar nogui", (error, stdout, stderr) => {
-    //     if (error) {
-    //         console.error(`exec error: ${error}`);
-    //         return;
-    //     }
-    //     console.log(`stdout: ${stdout}`);
-    //     console.error(`stderr: ${stderr}`);
-    //     res.send("success!");
-    // });
-    res.send("success!");
-});
 
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  next(createError(404));
-});
+// app.use('/run', (req, res)=>{
 
-// error handler
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+//     // childProcess.exec("cd minecraft && java -Xmx1024M -Xms1024M -jar server.jar nogui", (error, stdout, stderr) => {
+//     //     if (error) {
+//     //         console.error(`exec error: ${error}`);
+//     //         return;
+//     //     }
+//     //     console.log(`stdout: ${stdout}`);
+//     //     console.error(`stderr: ${stderr}`);
+//     //     res.send("success!");
+//     // });
+//     res.send("success!");
+// });
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
-});
+// // catch 404 and forward to error handler
+// app.use(function(req, res, next) {
+//   next(createError(404));
+// });
+
+// // error handler
+// app.use(function(err, req, res, next) {
+//   // set locals, only providing error in development
+//   res.locals.message = err.message;
+//   res.locals.error = req.app.get('env') === 'development' ? err : {};
+
+//   // render the error page
+//   res.status(err.status || 500);
+//   res.render('error');
+// });
 
 var WebSocketServer = require('websocket').server;
-var http = require('http');
 var server = http.createServer(function(request, response) {
     console.log((new Date()) + ' Received request for ' + request.url);
     response.writeHead(404);
