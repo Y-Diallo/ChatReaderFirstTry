@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import { useTimer } from 'react-timer-hook';
 import './App.css';
 import Timer from './Timer';
-const ws = new WebSocket('ws://localhost:7070/', 'echo-protocol');
+const ws = new WebSocket('ws://ec2-44-202-214-195.compute-1.amazonaws.com:7070/', 'echo-protocol');
 
 function App() {
   interface wsInboundCommandMessageData{
