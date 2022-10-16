@@ -216,7 +216,7 @@ const updatePosition = () => {
 
 
 //specific minecraft commands
-// var app = express();
+var app = express();
 
 // app.use(logger('dev'));
 // app.use(express.json());
