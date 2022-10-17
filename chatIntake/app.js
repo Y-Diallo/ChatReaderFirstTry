@@ -30,7 +30,7 @@ let log = function(data) {
         let posX = pos[0].trim();
         let posY = pos[1].trim();
         let posZ = pos[2].trim();
-        console.log("position [x,y,z]", [posX,posY,posZ]);
+        // console.log("position [x,y,z]", [posX,posY,posZ]);
         posX = Math.round(parseInt(posX.slice(0,posX.length-1)));
         posY = Math.round(parseInt(posY.slice(0,posY.length-1)));
         posZ = Math.round(parseInt(posZ.slice(0,posZ.length-1)));
