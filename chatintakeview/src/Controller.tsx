@@ -1,8 +1,8 @@
 import React, { useRef, useState, useEffect } from 'react';
-import './App.css';
-const ws = new WebSocket('ws://ec2-44-202-214-195.compute-1.amazonaws.com:7070/', 'echo-protocol');
+import './Controller.css';
+const ws = new WebSocket('ws://localhost:7070/', 'echo-protocol');
 
-function App() {
+function Controller() {
   interface wsInboundCommandMessageData{
     type : string,
     commands: commandDetails[],
@@ -157,4 +157,4 @@ function App() {
   );
 }
 
-export default App;
+export default Controller;
