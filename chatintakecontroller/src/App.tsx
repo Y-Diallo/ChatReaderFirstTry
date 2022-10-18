@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import './App.css';
 import Timer from './Timer';
-const ws = new WebSocket('ws://ec2-3-239-234-134.compute-1.amazonaws.com:7070/', 'echo-protocol');
+const ws = new WebSocket('ws:/54.208.28.153:7070/', 'echo-protocol');
 
 function App() {
   interface wsInboundCommandMessageData{
