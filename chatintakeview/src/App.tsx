@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import vs from './vs.png';
 import './App.css';
-const ws = new WebSocket('ws://ec2-44-202-214-195.compute-1.amazonaws.com:8080/', 'echo-protocol');
+const ws = new WebSocket('ws://ec2-3-239-234-134.compute-1.amazonaws.com:8080/', 'echo-protocol');
 
 function App() {
   interface wsInboundViewMessageData{
