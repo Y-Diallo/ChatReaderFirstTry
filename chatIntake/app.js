@@ -3,7 +3,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var password = require('./secret');
-const commands = require('./minecraftCommands');
+const commands = require('../chatintakeview/src/minecraftCommands');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 const childProcess = require('child_process');
@@ -18,7 +18,7 @@ var minecraftServerProcess = childProcess.spawn('java', [
     'nogui'
 ]);
 // Log server output to stdout
-let ws;
+let ws = [];
 let log = function(data) {
     let output = data.toString();
     if(output.includes("[Server thread/INFO]: yman234 has the following entity data:")){
@@ -34,13 +34,15 @@ let log = function(data) {
         posY = Math.round(parseInt(posY.slice(0,posY.length-1)));
         posZ = Math.round(parseInt(posZ.slice(0,posZ.length-1)));
 
-        if(ws){
-            ws.sendUTF(JSON.stringify({
-                type: "positionView",
-                posX: posX,
-                posY: posY,
-                posZ: posZ,
-            }));
+        if(ws.length>0){
+            ws.forEach((connection) => {
+                connection.sendUTF(JSON.stringify({
+                    type: "positionView",
+                    posX: posX,
+                    posY: posY,
+                    posZ: posZ,
+                }))
+            });
         }
     }else {
         process.stdout.write(output);
@@ -60,7 +62,7 @@ let selectedCommands = [];
 let seconds = 5*60;
 let autoRandom = false;
 
-const runCommands = (command) => {
+const runCommands = (command, minecraftName) => {
     console.log("running command", command);
     if(command.repeat){
         console.log("running repeat command", command);
@@ -225,7 +227,7 @@ voteServer.on('request', function(request) {
     }
     
     connection = request.accept('echo-protocol', request.origin);
-    ws = connection;
+    ws.push(connection);
     console.log((new Date()) + ' Connection accepted.');
     
     connection.on('message', function(message) {
@@ -234,8 +236,8 @@ voteServer.on('request', function(request) {
             console.log('Received Message: ' + JSON.parse(message.utf8Data).mode);
             let messageData = JSON.parse(message.utf8Data);
             connection.sendUTF(message.utf8Data);
-            if(messageData.mode && messageData.mode === "timeEnd"){
-                runCommands(messageData.winner);
+            if(messageData.mode && messageData.mode === "timeEnd" && messageData.minecraftName.length > 0){
+                runCommands(messageData.winner, messageData.minecraftName);
                 console.log(autoRandom);
                 if (autoRandom) {
                     //randomize commands
@@ -260,14 +262,18 @@ voteServer.on('request', function(request) {
                     console.log("randomized new commands, updating ui");
                     voters = [];//empty voters to allow new votes in new poll
                     votes = [0,0];
-                    ws.sendUTF(JSON.stringify({
-                        type: "view",
-                        selectedCommands:selectedCommands,
-                        votes: votes,
-                        voter: "",
-                        seconds: seconds,
-                        newDetails: true
-                    }));
+                    ws.forEach((connection) => {
+                        connection.sendUTF(JSON.stringify({
+                            type: "view",
+                            streamerName: messageData.streamerName,
+                            minecraftName: messageData.minecraftName,
+                            selectedCommands:selectedCommands,
+                            votes: votes,
+                            voter: "",
+                            seconds: seconds,
+                            newDetails: true
+                        }))
+                    });
                 }
             }
         }
@@ -304,7 +310,7 @@ const commandServer = new WebSocketServer({
     autoAcceptConnections: false
 });
 console.log("WebSocketServer Created:",commandServer);
-let cws;
+let cws = [];
 commandServer.on('request', function(request) {
     if (!originIsAllowed(request.origin)) {
       // Make sure we only accept requests from an allowed origin
@@ -314,7 +320,7 @@ commandServer.on('request', function(request) {
     }
     
     connection = request.accept('echo-protocol', request.origin);
-    cws = connection;
+    cws.push(connection);
     console.log((new Date()) + ' Connection accepted.');
     
     connection.on('message', function(message) {
@@ -329,19 +335,23 @@ commandServer.on('request', function(request) {
                 console.log("received new commands, updating ui");
                 voters = [];//empty voters to allow new votes in new poll
                 votes = [0,0];
-                ws.sendUTF(JSON.stringify({
-                    type: "view",
-                    selectedCommands:selectedCommands,
-                    votes: votes,
-                    voter: "",
-                    seconds: seconds,
-                    newDetails: true
-                }));
+                ws.forEach((connection) => {
+                    connection.sendUTF(JSON.stringify({
+                        type: "view",
+                        selectedCommands:selectedCommands,
+                        votes: votes,
+                        voter: "",
+                        seconds: seconds,
+                        newDetails: true
+                    }))
+                });
             }
             else if(messageData.mode && messageData.mode === "requestCommands"){
-                cws.sendUTF(JSON.stringify({type: "command",
-                    commands: commands
-                }));
+                cws.forEach((connection)=> {
+                        connection.sendUTF(JSON.stringify({type: "command",
+                        commands: commands
+                    }))}
+                );
             }else if(messageData.mode && messageData.mode === "autoRandom"){
                 autoRandom = messageData.state;
                 seconds = messageData.seconds;
@@ -370,14 +380,17 @@ const addVote = (vote, name)=>{ //expect votes in range [1,2]
     votes[(vote-1)]++;
     //push votes to front end
     console.log("sending vote",[vote, name])
-    ws.sendUTF(JSON.stringify({
-      type: "view",
-      selectedCommands:selectedCommands,
-      votes: votes,
-      voter: name,
-      seconds: seconds,
-      newDetails: false
-    }));
+    ws.forEach((connection) => {
+        connection.sendUTF(JSON.stringify({
+            type: "view",
+            selectedCommands:selectedCommands,
+            votes: votes,
+            voter: name,
+            seconds: seconds,
+            newDetails: false
+        }))
+    });
+
 }
 
 

@@ -1,12 +1,11 @@
 import React, { useRef, useState, useEffect } from 'react';
+import {useParams} from 'react-router-dom';
 import './Controller.css';
+import commands from './minecraftCommands';
+// const ws = new WebSocket('ws://54.208.28.153:7070/', 'echo-protocol');
 const ws = new WebSocket('ws://localhost:7070/', 'echo-protocol');
 
 function Controller() {
-  interface wsInboundCommandMessageData{
-    type : string,
-    commands: commandDetails[],
-  }
   interface commandDetails {
     command : string,
     name : string,
@@ -16,31 +15,18 @@ function Controller() {
   }
   interface wsOutboundCommandMessageData {
     mode: string,
+    streamerName: string | undefined,
     seconds : number,
     selectedCommands: commandDetails[],
   }
-  const [commands, setCommands] = useState<commandDetails[]>([]);
-  const selectedCommands = useRef<commandDetails[]>([]);
-  const [newTime, setNewTime] = useState(300);//300 seconds
-  const currentTimeLeft = useRef(new Date());// 1 second
-  currentTimeLeft.current.setSeconds(currentTimeLeft.current.getSeconds() + 5);
-  const voters = useRef<string[]>([]);
-  const indexNumber = useRef(0);
+  const selectedCommands = useRef<commandDetails[]>([commands[0],commands[0]]);
+  const [newTime, setNewTime] = useState(90);//300 seconds  
+  const { streamerName } = useParams();
+
   useEffect(() => {
     ws.onopen = () => {
       // on connecting, do nothing but log it to the console
       console.log('connected');
-    }
-  
-    ws.onmessage = evt => {
-      // listen to data sent from the websocket server
-      const message = JSON.parse(evt.data);
-      console.log("message from server", message);
-      if(message.type && (message.type === 'command')){
-        const messageData : wsInboundCommandMessageData = message;
-        console.log("message from server",messageData);
-        setCommands(messageData.commands);
-      }
     }
   
     ws.onclose = () => {
@@ -56,6 +42,7 @@ function Controller() {
     }
     const outBoundMessage : wsOutboundCommandMessageData = {
       mode: "command",
+      streamerName: streamerName,
       seconds : newTime,
       selectedCommands: selectedCommands.current,
     };
@@ -72,6 +59,7 @@ function Controller() {
     let random2 = Math.floor(Math.random() * (max - min + 1) + min);
     const outBoundMessage : wsOutboundCommandMessageData = {
       mode: "command",
+      streamerName: streamerName,
       seconds : newTime,
       selectedCommands: [commands[random1],commands[random2]],
     };
@@ -87,6 +75,7 @@ function Controller() {
     let random1 = Math.floor(Math.random() * (max - min + 1) + min);
     const outBoundMessage : wsOutboundCommandMessageData = {
       mode: "command",
+      streamerName: streamerName,
       seconds : newTime,
       selectedCommands: [selectedCommands.current[0],commands[random1]],
     };
@@ -96,6 +85,7 @@ function Controller() {
   const avghans =()=>{
     const outBoundMessage = {
       mode: "avghans",
+      streamerName: streamerName,
     };
     ws.send(JSON.stringify(outBoundMessage));
   }
@@ -103,6 +93,7 @@ function Controller() {
   const autoRandom =(e: any)=>{
     const outBoundMessage = {
       mode: "autoRandom",
+      streamerName: streamerName,
       state: e.target.id === "on" ? true:false,
       seconds : newTime,
     };
@@ -111,6 +102,7 @@ function Controller() {
   const updatePosition =(e: any)=>{
     const outBoundMessage = {
       mode: "updatePosition",
+      streamerName: streamerName,
       state: e.target.id === "on" ? true:false,
     };
     ws.send(JSON.stringify(outBoundMessage));
@@ -119,7 +111,6 @@ function Controller() {
     <>
       <div className="controls">
         <select onChange={(e) => {
-          indexNumber.current = parseInt(e.target.value);
           selectedCommands.current[0] = commands[parseInt(e.target.value)];
           }}>
           {commands.map(({command,name}, index)=>{
@@ -127,7 +118,6 @@ function Controller() {
           })}
         </select>
         <select  onChange={(e) => {
-          indexNumber.current = parseInt(e.target.value);
           selectedCommands.current[1] = commands[parseInt(e.target.value)];
           }}>
           {commands.map(({command,name}, index)=>{
@@ -142,12 +132,11 @@ function Controller() {
           }
           }}/>
         <input type="button" onClick={() => submitUpdate()} value="Submit"/>
-        <input type="button" onClick={() => ws.send(JSON.stringify({mode:"requestCommands"}))} value="Request Commands"/>
       </div>
       <div style={{margin: "20px", padding: "20px", borderRadius:"10px", background: "white",width:"500px", height:"100px"}}>
         <input type="button" onClick={() => submitRandomUpdate()} value="Random"/>
         <input type="button" onClick={() => submitOneRandomUpdate()} value="Second command Random"/>
-        <input type="button" onClick={() => avghans()} value="Avghans"/>
+        {streamerName === "YmanIsHere" ? <input type="button" onClick={() => avghans()} value="Avghans"/>:<></>}
         <input id="on" type="button" onClick={(e) => autoRandom(e)} value="autoRandom on"/>
         <input id="off" type="button" onClick={(e) => autoRandom(e)} value="autoRandom off"/>
         <input id="on" type="button" onClick={(e) => updatePosition(e)} value="updatePosition on"/>

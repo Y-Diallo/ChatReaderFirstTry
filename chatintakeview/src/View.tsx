@@ -1,10 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
+import {useParams} from 'react-router-dom';
 import './View.css';
+// const ws = new WebSocket('ws://54.208.28.153:8080/', 'echo-protocol');
 const ws = new WebSocket('ws://localhost:8080/', 'echo-protocol');
 
 function View() {
   interface wsInboundViewMessageData{
-    type : string,
+    type : string,    
+    streamerName: string,
     selectedCommands: commandDetails[],
     votes: number[],
     voter : string,
@@ -12,7 +15,8 @@ function View() {
     newDetails: boolean
   }
   interface wsInboundPositionViewMessageData{
-    type : string,
+    type : string,    
+    streamerName: string,
     posX: number,
     posY: number,
     posZ: number,
@@ -30,6 +34,7 @@ function View() {
   const viewCommands = useRef<commandDetails[]>([{command:"",name:"Diamond Sword"},{command:"",name:"Tnt Spawn"}]);
   const votes1 = useRef(1);
   const votes2 = useRef(1);
+  const { streamerName, minecraftName } = useParams();
   const [totalVotes,setTotalVotes] = useState(2);
   const [position, setPosition] = useState([500,110,500]);
   const dateInital = useRef(new Date());// 1 second
@@ -46,34 +51,36 @@ function View() {
       // listen to data sent from the websocket server
       const message = JSON.parse(evt.data);
       console.log("message from server", message);
-      if(message.type && 'view' === message.type){
-        const messageData : wsInboundViewMessageData = message;
-        if(messageData.newDetails){
-          if(timeoutHold.current){
-            clearTimeout(timeoutHold.current);
-          }
-          viewCommands.current = messageData.selectedCommands;
-          allowVotes.current = true;//when setting up new poll allow votes
-          winner.current = 3;
-          startTimer(messageData.seconds);
+      if(message.streamerName && (streamerName === message.streamerName)){
+        if(message.type && ('view' === message.type)){
+            const messageData : wsInboundViewMessageData = message;
+            if(messageData.newDetails){
+                if(timeoutHold.current){
+                    clearTimeout(timeoutHold.current);
+                }
+                viewCommands.current = messageData.selectedCommands;
+                allowVotes.current = true;//when setting up new poll allow votes
+                winner.current = 3;
+                startTimer(messageData.seconds);
+            }
+            if(allowVotes.current){
+                votes1.current = messageData.votes[0];
+                votes2.current = messageData.votes[1];
+            }
+    
+            setTotalVotes(messageData.votes[0]+messageData.votes[1]);
+        }else if(message.type && 'positionView' === message.type){
+            const messageData : wsInboundPositionViewMessageData = message;
+            let posX = messageData.posX;
+            let posY = messageData.posY+60;
+            //bedrock at -60, floor around 60, adjust to make bedrock 0
+            let posZ = messageData.posZ;
+            posY = posY < 0 ? 0 : posY;
+            console.log("position [x,y,z]", [posX,posY,posZ]);
+            setPosition([posX,posY,posZ]);
         }
-        if(allowVotes.current){//
-          votes1.current = messageData.votes[0];
-          votes2.current = messageData.votes[1];
-        }
-  
-        setTotalVotes(messageData.votes[0]+messageData.votes[1]);
-      }else if(message.type && 'positionView' === message.type){
-        const messageData : wsInboundPositionViewMessageData = message;
-        let posX = messageData.posX;
-        let posY = messageData.posY+60;
-        //bedrock at -60, floor around 60, adjust to make bedrock 0
-        let posZ = messageData.posZ;
-        posY = posY < 0 ? 0 : posY;
-        console.log("position [x,y,z]", [posX,posY,posZ]);
-        setPosition([posX,posY,posZ]);
-      }
     }
+}
     ws.onclose = () => {
       console.log('disconnected');
       // automatically try to reconnect on connection loss
@@ -90,6 +97,8 @@ function View() {
       console.log(`the winner is ${winner.current} and the votes are 1: ${votes1.current}  2:${votes2.current}`);
       const outBoundMessage = {
         mode: "timeEnd",
+        streamerName: streamerName,
+        minecraftName: minecraftName,
         winner : viewCommands.current[winner.current],
       };
       ws.send(JSON.stringify(outBoundMessage));
