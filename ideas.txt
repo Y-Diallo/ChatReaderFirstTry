@@ -1,3 +1,5 @@
+-consider making the ws connection part of the channel
+
 -auto random
 -weighted random
 -add animations to front end? maybe use obs chromakeying

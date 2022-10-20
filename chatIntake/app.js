@@ -19,6 +19,17 @@ var minecraftServerProcess = childProcess.spawn('java', [
 ]);
 // Log server output to stdout
 let ws = [];
+let twsc;
+let channels = [{
+    streamerName:"YmanIsHere",
+    votes:[0,0],
+    voters:[],
+    selectedCommands:[],
+    seconds:90,
+    autoRandom:false,
+    updateCheck: false,
+    updateTimeout: null,
+}];
 let log = function(data) {
     let output = data.toString();
     if(output.includes("[Server thread/INFO]: yman234 has the following entity data:")){
@@ -56,13 +67,7 @@ const oneTime = (command)=>{
 }
 
 //voting variables
-let voters = [];
-let votes = [0,0]
-let selectedCommands = [];
-let seconds = 5*60;
-let autoRandom = false;
-
-const runCommands = (command, minecraftName) => {
+const runCommands = (command, channel) => {
     console.log("running command", command);
     if(command.repeat){
         console.log("running repeat command", command);
@@ -84,9 +89,9 @@ const runCommands = (command, minecraftName) => {
     }else if(command.hoard){
         let totalRuns = 100;
         for(let timesRan = 0; timesRan<totalRuns; timesRan++){
-            if(timesRan< voters.length){
-                for(let zombieToViewer = 0; zombieToViewer < totalRuns/voters.length ; zombieToViewer++){
-                    oneTime(`/execute at yman234 run summon ${command.command} ^${Math.floor(Math.random()*7)} ^2 ^${Math.floor(Math.random()*7)} {CustomName:'{"text":"${voters[timesRan]}"}'}\n`);
+            if(timesRan< channel.voters.length){
+                for(let zombieToViewer = 0; zombieToViewer < totalRuns/channel.voters.length ; zombieToViewer++){
+                    oneTime(`/execute at yman234 run summon ${command.command} ^${Math.floor(Math.random()*7)} ^2 ^${Math.floor(Math.random()*7)} {CustomName:'{"text":"${channel.voters[timesRan]}"}'}\n`);
                     totalRuns--;
                 }
             }else{
@@ -136,14 +141,12 @@ const runCommands = (command, minecraftName) => {
 }
 
 //update position
-let updateTimeout;
-let updateCheck = false;
-const updatePosition = () => {
-    if(updateCheck){
-        oneTime("/data get entity yman234 Pos\n");
-        updateTimeout = setTimeout(()=>updatePosition() ,1000);//change to every 10 seconds
-    }else if(updateTimeout){
-        clearTimeout(updateTimeout);
+const updatePosition = (channel) => {
+    if(channel.updateCheck){
+        oneTime(`/data get entity ${channel.minecraftName} Pos\n`);
+        channel.updateTimeout = setTimeout(()=>updatePosition() ,1000);//change to every 10 seconds
+    }else if(channel.updateTimeout){
+        clearTimeout(channel.updateTimeout);
     }
 }
 
@@ -236,10 +239,20 @@ voteServer.on('request', function(request) {
             console.log('Received Message: ' + JSON.parse(message.utf8Data).mode);
             let messageData = JSON.parse(message.utf8Data);
             connection.sendUTF(message.utf8Data);
-            if(messageData.mode && messageData.mode === "timeEnd" && messageData.minecraftName.length > 0){
-                runCommands(messageData.winner, messageData.minecraftName);
-                console.log(autoRandom);
-                if (autoRandom) {
+            if((messageData.mode && messageData.mode === "timeEnd") && (messageData.minecraftName && messageData.minecraftName.length > 0) && (messageData.streamerName && messageData.streamerName.length > 0)){
+                let voterIndex = channels.findIndex((item)=>item.streamerName == messageData.streamerName);
+                let currentChannel;
+                if(voterIndex == -1){
+                    twsc.sendUTF(`JOIN ${messageData.streamerName}`);
+                    channels.push({streamerName: messageData.streamerName});
+                    currentChannel = channels.at(channels.length-1);
+                }else{
+                    currentChannel = channels.at(voterIndex);
+                }
+                currentChannel.minecraftName = messageData.minecraftName;
+                runCommands(messageData.winner, currentChannel);
+                console.log(currentChannel.autoRandom);
+                if (currentChannel.autoRandom) {
                     //randomize commands
                     let max = commands.length-1;
                     let min = 0;
@@ -258,19 +271,19 @@ voteServer.on('request', function(request) {
                         random1 = Math.floor(Math.random() * ((lowRare-1) - min + 1) + min);
                         random2 = random.int(lowRare, min);
                     }
-                    selectedCommands = [commands[random1],commands[random2]];
+                    currentChannel.selectedCommands = [commands[random1],commands[random2]];
                     console.log("randomized new commands, updating ui");
-                    voters = [];//empty voters to allow new votes in new poll
-                    votes = [0,0];
+                    currentChannel.voters = [];//empty voters to allow new votes in new poll
+                    currentChannel.votes = [0,0];
                     ws.forEach((connection) => {
                         connection.sendUTF(JSON.stringify({
                             type: "view",
-                            streamerName: messageData.streamerName,
-                            minecraftName: messageData.minecraftName,
-                            selectedCommands:selectedCommands,
-                            votes: votes,
+                            streamerName: currentChannel.streamerName,
+                            minecraftName: currentChannel.minecraftName,
+                            selectedCommands: currentChannel.selectedCommands,
+                            votes: currentChannel.votes,
                             voter: "",
-                            seconds: seconds,
+                            seconds: currentChannel.seconds,
                             newDetails: true
                         }))
                     });
@@ -329,35 +342,57 @@ commandServer.on('request', function(request) {
             console.log('Received Message: ' + JSON.parse(message.utf8Data).mode);
             let messageData = JSON.parse(message.utf8Data);
             connection.sendUTF(message.utf8Data);
-            if(messageData.mode && messageData.mode === "command"){
-                selectedCommands = messageData.selectedCommands;
-                seconds = messageData.seconds;
+            if(messageData.mode && messageData.mode === "command"){//refactor
+                let voterIndex = channels.findIndex((item)=>item.streamerName == messageData.streamerName);
+                let currentChannel;
+                if(voterIndex == -1){
+                    twsc.sendUTF(`JOIN ${messageData.streamerName}`);
+                    channels.push({streamerName: messageData.streamerName});
+                    currentChannel = channels.at(channels.length-1);
+                }else{
+                    currentChannel = channels.at(voterIndex);
+                }
+                currentChannel.selectedCommands = messageData.selectedCommands;
+                currentChannel.seconds = messageData.seconds;
                 console.log("received new commands, updating ui");
-                voters = [];//empty voters to allow new votes in new poll
-                votes = [0,0];
+                currentChannel.voters = [];//empty voters to allow new votes in new poll
+                currentChannel.votes = [0,0];
                 ws.forEach((connection) => {
                     connection.sendUTF(JSON.stringify({
                         type: "view",
-                        selectedCommands:selectedCommands,
-                        votes: votes,
+                        streamerName: currentChannel.streamerName,
+                        selectedCommands: currentChannel.selectedCommands,
+                        votes: currentChannel.votes,
                         voter: "",
-                        seconds: seconds,
+                        seconds: currentChannel.seconds,
                         newDetails: true
                     }))
                 });
             }
-            else if(messageData.mode && messageData.mode === "requestCommands"){
-                cws.forEach((connection)=> {
-                        connection.sendUTF(JSON.stringify({type: "command",
-                        commands: commands
-                    }))}
-                );
-            }else if(messageData.mode && messageData.mode === "autoRandom"){
-                autoRandom = messageData.state;
-                seconds = messageData.seconds;
+            else if(messageData.mode && messageData.mode === "autoRandom"){
+                let voterIndex = channels.findIndex((item)=>item.streamerName == messageData.streamerName);
+                let currentChannel;
+                if(voterIndex == -1){
+                    twsc.sendUTF(`JOIN ${messageData.streamerName}`);
+                    channels.push({streamerName: messageData.streamerName});
+                    currentChannel = channels.at(channels.length-1);
+                }else{
+                    currentChannel = channels.at(voterIndex);
+                }
+                currentChannel.autoRandom = messageData.state;
+                currentChannel.seconds = messageData.seconds;
             }else if(messageData.mode && messageData.mode === "updatePosition"){
-                if(updateCheck !== messageData.state){//if the states are the same then this is meaningless
-                    updateCheck = messageData.state;
+                let voterIndex = channels.findIndex((item)=>item.streamerName == messageData.streamerName);
+                let currentChannel;
+                if(voterIndex == -1){
+                    twsc.sendUTF(`JOIN ${messageData.streamerName}`);
+                    channels.push({streamerName: messageData.streamerName});
+                    currentChannel = channels.at(channels.length-1);
+                }else{
+                    currentChannel = channels.at(voterIndex);
+                }
+                if(currentChannel.updateCheck !== messageData.state){//if the states are the same then this is meaningless
+                    currentChannel.updateCheck = messageData.state;
                     updatePosition();
                 }
             }else if(messageData.mode && messageData.mode === "avghans"){
@@ -375,18 +410,25 @@ commandServer.on('request', function(request) {
 });
 
 //voting system
-const addVote = (vote, name)=>{ //expect votes in range [1,2]
-    voters.push(name);
-    votes[(vote-1)]++;
+const addVote = (vote, name, streamerName)=>{ //expect votes in range [1,2]
+    let voterIndex = channels.findIndex((item)=>item.streamerName == streamerName);
+    if(voterIndex == -1){//streamer name should always exist
+        console.log("streamer name not in channels array", streamerName);
+        return;
+    }
+    let channel = channels.at(voterIndex);
+    channel.voters.push(name);
+    channel.votes[(vote-1)]++;
     //push votes to front end
     console.log("sending vote",[vote, name])
     ws.forEach((connection) => {
         connection.sendUTF(JSON.stringify({
             type: "view",
-            selectedCommands:selectedCommands,
-            votes: votes,
+            streamerName: channel.streamerName,
+            selectedCommands: channel.selectedCommands,
+            votes: channel.votes,
             voter: name,
-            seconds: seconds,
+            seconds: channel.seconds,
             newDetails: false
         }))
     });
@@ -413,6 +455,7 @@ client.on('connect', function(connection) {
 
     // This is a simple bot that doesn't need the additional
     // Twitch IRC capabilities.
+    twsc = connection;
 
     connection.sendUTF('CAP REQ :twitch.tv/commands twitch.tv/membership twitch.tv/tags');
     
@@ -465,7 +508,7 @@ client.on('connect', function(connection) {
                                 parseInt(parsedMessage.command.botCommandParams) : -1;
 
                                 if(voteNumber == 1 || voteNumber == 2){
-                                    addVote(voteNumber, parsedMessage.tags["display-name"]);
+                                    addVote(voteNumber, parsedMessage.tags["display-name"],"channel name");
                                 }
                             }
                             // else if ('gameRemind' === parsedMessage.command.botCommand) {

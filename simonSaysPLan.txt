@@ -1,0 +1,19 @@
+simon says plan
+
+make it an overlaying extention 1/2 opacity or smth
+
+with 4 buttons
+
+collect user input and determine if they are correct
+
+under the overlay, have my simon says under it where i'm going against chat but with full opacity
+
+me vs chat
+
+how does it evolve?
+more buttons?
+avghans edition?
+different types of switches/buttons?
+open a mini game
+
+
