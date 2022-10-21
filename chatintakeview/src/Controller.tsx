@@ -90,6 +90,7 @@ function Controller() {
     const outBoundMessage = {
       mode: "avghans",
       streamerName: streamerName,
+      minecraftName: minecraftName,
     };
     ws.send(JSON.stringify(outBoundMessage));
   }
@@ -114,7 +115,7 @@ function Controller() {
     ws.send(JSON.stringify(outBoundMessage));
   }
   return (
-    <>
+    <div className='wrapper'>
       <div className="controls">
         <select onChange={(e) => {
           selectedCommands.current[0] = commands[parseInt(e.target.value)];
@@ -130,25 +131,30 @@ function Controller() {
             return <option key={index*2} value={index}>{name}</option>;
           })}
         </select>
-        <input type="text" value={newTime} onChange={(e) => {
-          if(parseInt(e.target.value)){
-            setNewTime(parseInt(e.target.value))
-          }else {
-            setNewTime(0);
-          }
-          }}/>
-        <input type="button" onClick={() => submitUpdate()} value="Submit"/>
+        <span className='timeSetter'>
+            <label className="input">
+                <input className="input__field" type="text" placeholder=" "  value={newTime} onChange={(e) => {
+                    if(parseInt(e.target.value)){
+                        setNewTime(parseInt(e.target.value))
+                    }else {
+                        setNewTime(0);
+                    }
+                }}/>
+                <span className="input__label">Seconds To Vote</span>
+            </label>
+        </span>
+        <input className='button-30 submitButton' type="button" onClick={() => submitUpdate()} value="Submit"/>
       </div>
-      <div style={{margin: "20px", padding: "20px", borderRadius:"10px", background: "white",width:"500px", height:"100px"}}>
-        <input type="button" onClick={() => submitRandomUpdate()} value="Random"/>
-        <input type="button" onClick={() => submitOneRandomUpdate()} value="Second command Random"/>
-        {streamerName === "YmanIsHere" ? <input type="button" onClick={() => avghans()} value="Avghans"/>:<></>}
-        <input id="on" type="button" onClick={(e) => autoRandom(e)} value="autoRandom on"/>
-        <input id="off" type="button" onClick={(e) => autoRandom(e)} value="autoRandom off"/>
-        <input id="on" type="button" onClick={(e) => updatePosition(e)} value="updatePosition on"/>
-        <input id="off" type="button" onClick={(e) => updatePosition(e)} value="updatePosition off"/>
+      <div className="buttonContainer">
+        <input className='button-30' type="button" onClick={() => submitRandomUpdate()} value="Complete Random"/>
+        <input className='button-30' type="button" onClick={() => submitOneRandomUpdate()} value="Second Command Random"/>
+        {streamerName === "YmanIsHere" ? <input className='button-30' type="button" onClick={() => avghans()} value="Avghans"/>:<></>}
+        <input className='button-30' id="on" type="button" onClick={(e) => autoRandom(e)} value="autoRandom on"/>
+        <input className='button-30' id="off" type="button" onClick={(e) => autoRandom(e)} value="autoRandom off"/>
+        <input className='button-30'id="on" type="button" onClick={(e) => updatePosition(e)} value="updatePosition on"/>
+        <input className='button-30' id="off" type="button" onClick={(e) => updatePosition(e)} value="updatePosition off"/>
       </div>
-    </>
+    </div>
   );
 }
 

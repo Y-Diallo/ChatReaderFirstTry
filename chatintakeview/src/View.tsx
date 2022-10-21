@@ -34,7 +34,7 @@ function View() {
   const viewCommands = useRef<commandDetails[]>([{command:"",name:"Diamond Sword"},{command:"",name:"Tnt Spawn"}]);
   const votes1 = useRef(1);
   const votes2 = useRef(1);
-  const { streamerName, minecraftName } = useParams();
+  const { streamerName } = useParams();
   const [totalVotes,setTotalVotes] = useState(2);
   const [position, setPosition] = useState([500,110,500]);
   const dateInital = useRef(new Date());// 1 second
@@ -98,7 +98,6 @@ function View() {
       const outBoundMessage = {
         mode: "timeEnd",
         streamerName: streamerName,
-        minecraftName: minecraftName,
         winner : viewCommands.current[winner.current],
       };
       ws.send(JSON.stringify(outBoundMessage));

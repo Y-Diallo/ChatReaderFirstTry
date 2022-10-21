@@ -1,14 +1,165 @@
 
-  
-  .controls {
-    background: white;
-    height: 100px;
-    width: 600px;
-    margin: 20px;
-    padding: 10px;
-    border-radius: 10px;
-  }
-  .controls select {
-    width: 300px;
-    height: 30px;
-  }
+.wrapper{
+  font-family: Montserrat, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #36395A;
+  height: 100%;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+.controls {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap:10px;
+  height: 130px;
+  width: 620px;
+  margin: 20px;
+  padding: 10px;
+  grid-auto-rows: minmax(50px, auto);
+  background: linear-gradient(0deg, #F4F4C2, #878ECD);
+
+}
+.controls select {
+  width: 300px;
+  height: 30px;
+}
+
+.timeSetter {
+  grid-column: 1 / 2;
+  grid-row: 2;
+  display: flex;
+  flex-direction: column;
+  height: 60px;
+}
+
+.input {
+  position: relative;
+  color:white;
+}
+
+.input__label {
+  position: absolute;
+  left: 0;
+  top: 0;
+  margin-top: -5px;
+  background: pink;
+  white-space: nowrap;
+  transform: translate(0, 0);
+  transform-origin: 0 0;
+  background: var(--color-background);
+  transition: transform 120ms ease-in;
+  font-weight: bold;
+  line-height: 1.2;
+  font-size: 30px;
+}
+
+.input__field {
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  border: 3px solid currentColor;
+  padding: var(--size-bezel) var(--size-bezel);
+  color: white;
+  background: transparent;
+  border-radius: var(--size-radius);
+  font-size: 45px;
+}
+
+.input__field + .input__label {
+  transform: translate(.25rem, -65%) scale(.8);
+  color: var(--color-accent);
+}
+
+.submitButton {
+  grid-column: 2 / 2;
+  grid-row: 2;
+}
+.buttonContainer {
+  margin: 20px;
+  padding: 20px;
+  background: white;
+  width: 600px;
+  height: 120px;
+  background: linear-gradient(180deg, #F4F4C2, #878ECD);
+
+}
+
+.button-30{
+    align-items: center;
+    appearance: none;
+    background-color: #FCFCFD;
+    border-radius: 4px;
+    border-width: 0;
+    box-shadow: rgba(45, 35, 66, 0.4) 0 2px 4px,rgba(45, 35, 66, 0.3) 0 7px 13px -3px,#D6D6E7 0 -3px 0 inset;
+    box-sizing: border-box;
+    color: #36395A;
+    cursor: pointer;
+    display: inline-flex;
+    font-family: "JetBrains Mono",monospace;
+    height: 48px;
+    justify-content: center;
+    line-height: 1;
+    list-style: none;
+    overflow: hidden;
+    padding-left: 10px;
+    padding-right: 10px;
+    position: relative;
+    text-align: left;
+    text-decoration: none;
+    transition: box-shadow .15s,transform .15s;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    white-space: nowrap;
+    will-change: box-shadow,transform;
+    font-size: 18px;
+    margin: 5px;
+}
+
+.button-30:focus {
+  box-shadow: #D6D6E7 0 0 0 1.5px inset, rgba(45, 35, 66, 0.4) 0 2px 4px, rgba(45, 35, 66, 0.3) 0 7px 13px -3px, #D6D6E7 0 -3px 0 inset;
+}
+
+.button-30:hover {
+  box-shadow: rgba(45, 35, 66, 0.4) 0 4px 8px, rgba(45, 35, 66, 0.3) 0 7px 13px -3px, #D6D6E7 0 -3px 0 inset;
+  transform: translateY(-2px);
+}
+
+.button-30:active {
+  box-shadow: #D6D6E7 0 3px 7px inset;
+  transform: translateY(2px);
+}
+
+
+/* <select> styles */
+select {
+  /* Reset */
+  appearance: none;
+  border: 0;
+  outline: 0;
+  font: inherit;
+  /* Personalize */
+  width: 20em;
+  height: 3em;
+  padding: 0 4em 0 1em;
+  background: url(https://upload.wikimedia.org/wikipedia/commons/9/9d/Caret_down_font_awesome_whitevariation.svg)
+      no-repeat right 0.8em center / 1.4em,
+    linear-gradient(to left, rgba(255, 255, 255, 0.3) 3em, rgba(255, 255, 255, 0.2) 3em);
+  color: white;
+  border-radius: 0.25em;
+  box-shadow: 0 0 1em 0 rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+
+}
+/* <option> colors */
+option {
+  color: inherit;
+  background-color: #878ECD;
+}
+/* Remove focus outline */
+select:focus {
+  outline: none;
+}
+/* Remove IE arrow */
+select::-ms-expand {
+  display: none;
+}

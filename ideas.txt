@@ -4,6 +4,8 @@ abstract \n into funct
 -auto random
 -weighted random
 -add animations to front end? maybe use obs chromakeying
+-validate the minecraft name more (potential for bash injection)
+
 
 -----  more medium power ones ----- 
 1 min of 5s tnt ever 15 seconds
