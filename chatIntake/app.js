@@ -22,13 +22,14 @@ let ws = [];
 let twsc;
 let channels = [{
     streamerName:"YmanIsHere",
+    minecraftName:"yman234",
     votes:[0,0],
     voters:[],
     selectedCommands:[],
     seconds:90,
     autoRandom:false,
     updateCheck: false,
-    updateTimeout: null,
+    updateTimeout: {},
 }];
 let log = function(data) {
     let output = data.toString();

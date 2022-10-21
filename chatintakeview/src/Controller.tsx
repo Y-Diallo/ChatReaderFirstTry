@@ -16,12 +16,13 @@ function Controller() {
   interface wsOutboundCommandMessageData {
     mode: string,
     streamerName: string | undefined,
+    minecraftName: string | undefined,
     seconds : number,
     selectedCommands: commandDetails[],
   }
   const selectedCommands = useRef<commandDetails[]>([commands[0],commands[0]]);
   const [newTime, setNewTime] = useState(90);//300 seconds  
-  const { streamerName } = useParams();
+  const { streamerName, minecraftName } = useParams();
 
   useEffect(() => {
     ws.onopen = () => {
@@ -43,6 +44,7 @@ function Controller() {
     const outBoundMessage : wsOutboundCommandMessageData = {
       mode: "command",
       streamerName: streamerName,
+      minecraftName: minecraftName,
       seconds : newTime,
       selectedCommands: selectedCommands.current,
     };
@@ -60,6 +62,7 @@ function Controller() {
     const outBoundMessage : wsOutboundCommandMessageData = {
       mode: "command",
       streamerName: streamerName,
+      minecraftName: minecraftName,
       seconds : newTime,
       selectedCommands: [commands[random1],commands[random2]],
     };
@@ -76,6 +79,7 @@ function Controller() {
     const outBoundMessage : wsOutboundCommandMessageData = {
       mode: "command",
       streamerName: streamerName,
+      minecraftName: minecraftName,
       seconds : newTime,
       selectedCommands: [selectedCommands.current[0],commands[random1]],
     };
@@ -94,6 +98,7 @@ function Controller() {
     const outBoundMessage = {
       mode: "autoRandom",
       streamerName: streamerName,
+      minecraftName: minecraftName,
       state: e.target.id === "on" ? true:false,
       seconds : newTime,
     };
@@ -103,6 +108,7 @@ function Controller() {
     const outBoundMessage = {
       mode: "updatePosition",
       streamerName: streamerName,
+      minecraftName: minecraftName,
       state: e.target.id === "on" ? true:false,
     };
     ws.send(JSON.stringify(outBoundMessage));

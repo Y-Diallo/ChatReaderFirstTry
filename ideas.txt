@@ -1,5 +1,6 @@
 -consider making the ws connection part of the channel
-
+account for # infront of channel name
+abstract \n into funct
 -auto random
 -weighted random
 -add animations to front end? maybe use obs chromakeying
