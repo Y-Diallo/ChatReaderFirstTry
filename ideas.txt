@@ -1,12 +1,9 @@
--consider making the ws connection part of the channel
-account for # infront of channel name
-abstract \n into funct
 -auto random
 -weighted random
 -add animations to front end? maybe use obs chromakeying
--validate the minecraft name more (potential for bash injection)
 
-
+-make commands work with diff minecraft names
+-join multiple 
 -----  more medium power ones ----- 
 1 min of 5s tnt ever 15 seconds
 iron armor
@@ -46,27 +43,7 @@ CLEAR INV SPAWNING BOSSES this is happening on a regualr basis
 golive image
 me going into a cave with a light on my head and minecraft pick in hand
 
-90s predictions, but the rarity is weighted
-to make it harder to tp me fully back without a boss or something
-(1/10 maybe?)
-
-CHECKPOINT vote
-spawns a lil checkpoint command block area
-
-
-LOSERS QUEUE FOLLOWS YOU EVERYWHERE
-lose games
-miss bus
-drop food
-fail quiz
-qt short films
-
-try to run from losers queue and it just follows you there
-Square CAM - DONE
-CHOOSE MUSIC
-CHOOSE SFX
-
-BUY BETTER FOLLOW GRAPHIC
+BETTER FOLLOW GRAPHIC
 GET STARTING SOON SCENE
 NEW ARROW STINGER
 SETUP RAID GRAPHIC
