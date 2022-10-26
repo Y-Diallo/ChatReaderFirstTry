@@ -3,7 +3,15 @@
 -add animations to front end? maybe use obs chromakeying
 
 -make commands work with diff minecraft names
--join multiple 
+-join multiple channels
+
+-remove streamer check code duplication
+-test auto random and random buttons
+
+-make commands work with different streamers
+-consider multiple minecraft names per twitch name
+twitch name regex
+/^(#)?[a-zA-Z0-9]{4,25}$/
 -----  more medium power ones ----- 
 1 min of 5s tnt ever 15 seconds
 iron armor

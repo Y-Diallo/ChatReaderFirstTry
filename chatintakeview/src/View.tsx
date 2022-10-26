@@ -20,6 +20,7 @@ function View() {
     posX: number,
     posY: number,
     posZ: number,
+    streamerNames: string[],
   }
   interface commandDetails {
     command : string,
@@ -69,8 +70,13 @@ function View() {
             }
     
             setTotalVotes(messageData.votes[0]+messageData.votes[1]);
-        }else if(message.type && 'positionView' === message.type){
-            const messageData : wsInboundPositionViewMessageData = message;
+        }
+    }else if(message.type && 'positionView' === message.type){
+        const messageData : wsInboundPositionViewMessageData = message;
+        console.log("streamer name " + streamerName + " and streamer array ",messageData.streamerNames);
+        if(messageData.streamerNames.find((name)=>{
+            return name === streamerName;
+        })){
             let posX = messageData.posX;
             let posY = messageData.posY+60;
             //bedrock at -60, floor around 60, adjust to make bedrock 0
@@ -80,6 +86,7 @@ function View() {
             setPosition([posX,posY,posZ]);
         }
     }
+    
 }
     ws.onclose = () => {
       console.log('disconnected');
