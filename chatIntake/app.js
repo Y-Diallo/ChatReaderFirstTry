@@ -83,11 +83,11 @@ const runCommands = (command, channel) => {
         console.log("running repeat command", command);
         if(command.name === "Snowball Art"){
             oneTime(command.command);
-            oneTime('give yman234 minecraft:snowball 32\n');
+            oneTime(`give ${channel.minecraftName} minecraft:snowball 32\n`);
             setTimeout(function() { oneTime('/fill 5 63 1 5 63 1 minecraft:air\n')},1000*60*5);//consider saying when its over in game
         }else if(command.name === "Ride Snowball"){
             oneTime(command.command);
-            oneTime('give yman234 minecraft:snowball 32\n');
+            oneTime(`give ${channel.minecraftName} minecraft:snowball 32\n`);
             setTimeout(function() { oneTime('/fill 2 63 1 2 63 1 minecraft:air\n')},1000*60*5);
         }else if(command.name === "Human Drill"){
             oneTime(command.command);
@@ -101,35 +101,35 @@ const runCommands = (command, channel) => {
         for(let timesRan = 0; timesRan<totalRuns; timesRan++){
             if(timesRan< channel.voters.length){
                 for(let zombieToViewer = 0; zombieToViewer < totalRuns/channel.voters.length ; zombieToViewer++){
-                    oneTime(`/execute at yman234 run summon ${command.command} ^${Math.floor(Math.random()*7)} ^2 ^${Math.floor(Math.random()*7)} {CustomName:'{"text":"${channel.voters[timesRan]}"}'}\n`);
+                    oneTime(`/execute at ${channel.minecraftName} run summon ${command.command} ^${Math.floor(Math.random()*7)} ^2 ^${Math.floor(Math.random()*7)} {CustomName:'{"text":"${channel.voters[timesRan]}"}'}\n`);
                     totalRuns--;
                 }
             }else{
-                oneTime(`/execute at yman234 run summon ${command.command} ^${Math.floor(Math.random()*7)} ^2 ^${Math.floor(Math.random()*7)} {CustomName:'{"text":"ybotman"}'}\n`);
+                oneTime(`/execute at ${channel.minecraftName} run summon ${command.command} ^${Math.floor(Math.random()*7)} ^2 ^${Math.floor(Math.random()*7)} {CustomName:'{"text":"ybotman"}'}\n`);
             }
         }
     }else if(command.special){
         //figure out which special case it is
         
         if(command.name === "Full Armor"){
-            oneTime('/give @p minecraft:netherite_helmet{Enchantments:[{id:protection,lvl:255},{id:thorns,lvl:255},{id:unbreaking,lvl:255}]}\n');
-            oneTime('/give @p minecraft:netherite_chestplate{Enchantments:[{id:protection,lvl:255},{id:thorns,lvl:255},{id:mending,lvl:255},{id:unbreaking,lvl:255}]}\n');
-            oneTime('/give @p minecraft:netherite_leggings{Enchantments:[{id:protection,lvl:255},{id:thorns,lvl:255},{id:mending,lvl:255},{id:unbreaking,lvl:255}]}\n');
-            oneTime('/give @p minecraft:netherite_boots{Enchantments:[{id:protection,lvl:255},{id:thorns,lvl:255},{id:mending,lvl:255},{id:unbreaking,lvl:255}]}\n');
+            oneTime(`/give ${channel.minecraftName} minecraft:netherite_helmet{Enchantments:[{id:protection,lvl:255},{id:thorns,lvl:255},{id:unbreaking,lvl:255}]}\n`);
+            oneTime(`/give ${channel.minecraftName} minecraft:netherite_chestplate{Enchantments:[{id:protection,lvl:255},{id:thorns,lvl:255},{id:mending,lvl:255},{id:unbreaking,lvl:255}]}\n`);
+            oneTime(`/give ${channel.minecraftName} minecraft:netherite_leggings{Enchantments:[{id:protection,lvl:255},{id:thorns,lvl:255},{id:mending,lvl:255},{id:unbreaking,lvl:255}]}\n`);
+            oneTime(`/give ${channel.minecraftName} minecraft:netherite_boots{Enchantments:[{id:protection,lvl:255},{id:thorns,lvl:255},{id:mending,lvl:255},{id:unbreaking,lvl:255}]}\n`);
         }else if(command.name === "Iron Armor"){
-            oneTime('/give @p minecraft:netherite_helmet{Enchantments:[{id:protection,lvl:255},{id:thorns,lvl:255},{id:unbreaking,lvl:255}]}\n');
-            oneTime('/give @p minecraft:netherite_chestplate{Enchantments:[{id:protection,lvl:255},{id:thorns,lvl:255},{id:mending,lvl:255},{id:unbreaking,lvl:255}]}\n');
-            oneTime('/give @p minecraft:netherite_leggings{Enchantments:[{id:protection,lvl:255},{id:thorns,lvl:255},{id:mending,lvl:255},{id:unbreaking,lvl:255}]}\n');
-            oneTime('/give @p minecraft:netherite_boots{Enchantments:[{id:protection,lvl:255},{id:thorns,lvl:255},{id:mending,lvl:255},{id:unbreaking,lvl:255}]}\n');
+            oneTime(`/give ${channel.minecraftName} minecraft:netherite_helmet{Enchantments:[{id:protection,lvl:255},{id:thorns,lvl:255},{id:unbreaking,lvl:255}]}\n`);
+            oneTime(`/give ${channel.minecraftName} minecraft:netherite_chestplate{Enchantments:[{id:protection,lvl:255},{id:thorns,lvl:255},{id:mending,lvl:255},{id:unbreaking,lvl:255}]}\n`);
+            oneTime(`/give ${channel.minecraftName} minecraft:netherite_leggings{Enchantments:[{id:protection,lvl:255},{id:thorns,lvl:255},{id:mending,lvl:255},{id:unbreaking,lvl:255}]}\n`);
+            oneTime(`/give ${channel.minecraftName} minecraft:netherite_boots{Enchantments:[{id:protection,lvl:255},{id:thorns,lvl:255},{id:mending,lvl:255},{id:unbreaking,lvl:255}]}\n`);
         }else if(command.name === "Bumpin Bow"){
             oneTime(command.command);
-            oneTime("/give yman234 arrow 64\n");
+            oneTime(`/give ${channel.minecraftName} arrow 64\n`);
         }else if(command.name === "Ok Bow"){
             oneTime(command.command);
-            oneTime("/give yman234 arrow 64\n");
+            oneTime(`/give ${channel.minecraftName} arrow 64\n`);
         }else if(command.name === "Pokey Bow"){
             oneTime(command.command);
-            oneTime("/give yman234 arrow 64\n");
+            oneTime(`/give ${channel.minecraftName} arrow 64\n`);
         }else if(command.name === "Tnt Chase"){
             oneTime(`/fill 6 63 3 6 63 3 minecraft:redstone_wire\n`);
             oneTime(command.command);
@@ -143,7 +143,8 @@ const runCommands = (command, channel) => {
             console.log("unexpected", command);
         }
     }else{
-        oneTime(command.command);
+        let runCommand = command.command.replace("**name**",channel.minecraftName);
+        oneTime(runCommand);
         if(command.name === "Clear Items"){
             oneTime("/kill @e[type=item]\n");
         }
@@ -335,7 +336,7 @@ voteServer.on('request', function(request) {
                 }else{
                     currentChannel = channels.at(voterIndex);
                     runCommands(messageData.winner, currentChannel);
-                    console.log(currentChannel.autoRandom);
+                    console.log("autoRandom State", [currentChannel.streamerName, currentChannel.autoRandom]);
                     if (currentChannel.autoRandom) {
                         currentChannel.selectedCommands = [commands[weightedRandom()],commands[weightedRandom()]];
                         console.log("randomized new commands, updating ui");
@@ -591,6 +592,7 @@ client.on('connect', function(connection) {
                             if ('Login authentication failed' === parsedMessage.parameters) {
                                 console.log(`Authentication failed: should leave channels`);
                                 // connection.sendUTF(`PART ${channel}`);
+                                //do api call and attempt to reauth
                             }
                             else if ('You don’t have permission to perform that action' === parsedMessage.parameters) {
                                 console.log(`No permission. Check if the access token is still valid. leave channel repsonsible`);
