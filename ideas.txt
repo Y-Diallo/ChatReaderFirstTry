@@ -12,6 +12,10 @@
 -consider multiple minecraft names per twitch name
 twitch name regex
 /^(#)?[a-zA-Z0-9]{4,25}$/
+
+-condense websocket on frontend and backend into one websocket
+
+figure out how to make the weather work everywhere
 -----  more medium power ones ----- 
 1 min of 5s tnt ever 15 seconds
 iron armor
