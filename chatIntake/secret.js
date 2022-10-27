@@ -1,2 +1,2 @@
-const password = 'oauth:s6liztuwx7728ubla70aiiw0wt7xeo';
+const password = 'oauth:b011yqfgt4bg68mby3otscm5d1bkt4';
 module.exports = password;
