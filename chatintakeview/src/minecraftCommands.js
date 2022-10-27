@@ -12,7 +12,7 @@ const commands = [
     //less rares 10
     {command: "/execute at **name** run summon tnt ~ ~ ~\n", name: "Beeeg Tnt"},
     {command: "/effect give **name** minecraft:poison 60\n", name: "Poison.."},
-    {command: "/fill 6 63 1 6 63 1 minecraft:redstone_block\n", name: "Tnt Chase", special: true},//new
+    {command: "", name: "Tnt Chase", special: true},//new
     {command: "tnt_minecart", name: "TNT Minecarts", hoard: true},
     //rares consider beacon 14
     {command: "/execute at **name** run summon minecraft:ender_dragon ^ ^2 ^2\n", name: "Spawn Ender Dragon"},

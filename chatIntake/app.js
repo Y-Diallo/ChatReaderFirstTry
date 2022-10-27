@@ -17,6 +17,11 @@ var minecraftServerProcess = childProcess.spawn('java', [
     'server.jar',
     'nogui'
 ]);
+//commands block layout (streamer, y level)
+const commandBlockLayout = [
+    {streamerName:"thejargoncommander",yLevel:"53"},
+    {streamerName:"ymanishere",yLevel:"63"},
+]
 // Log server output to stdout
 let ws = [];
 let twsc;
@@ -36,9 +41,9 @@ let log = function(data) {
     let output = data.toString();
     if(output.includes("has the following entity data:")){
         let pos = output.slice(73,output.length-3);
-        console.log(pos);
+        // console.log(pos);
         pos = pos.split(",");
-        console.log(pos);
+        // console.log(pos);
         let posX = pos[0].trim();
         let posY = pos[1].trim();
         let posZ = pos[2].trim();
@@ -53,7 +58,7 @@ let log = function(data) {
                 streamerNames.push(channel.streamerName);
             }
         });
-        console.log("streamerNames", streamerNames);
+        // console.log("streamerNames", streamerNames);
         if(ws.length>0){
             ws.forEach((connection) => {
                 connection.sendUTF(JSON.stringify({
@@ -110,7 +115,12 @@ const runCommands = (command, channel) => {
         }
     }else if(command.special){
         //figure out which special case it is
-        
+        let yLevel = 100;
+        commandBlockLayout.forEach((commandBlock)=>{
+            if(channel.streamerName === commandBlock.streamerName){
+                yLevel = commandBlock.yLevel;
+            }
+        });
         if(command.name === "Full Armor"){
             oneTime(`/give ${channel.minecraftName} minecraft:netherite_helmet{Enchantments:[{id:protection,lvl:255},{id:thorns,lvl:255},{id:unbreaking,lvl:255}]}\n`);
             oneTime(`/give ${channel.minecraftName} minecraft:netherite_chestplate{Enchantments:[{id:protection,lvl:255},{id:thorns,lvl:255},{id:mending,lvl:255},{id:unbreaking,lvl:255}]}\n`);
@@ -131,13 +141,13 @@ const runCommands = (command, channel) => {
             oneTime(command.command);
             oneTime(`/give ${channel.minecraftName} arrow 64\n`);
         }else if(command.name === "Tnt Chase"){
-            oneTime(`/fill 6 63 3 6 63 3 minecraft:redstone_wire\n`);
-            oneTime(command.command);
+            oneTime(`/fill 6 ${yLevel} 3 6 ${yLevel} 3 minecraft:redstone_wire\n`);
+            oneTime(`/fill 6 ${yLevel} 1 6 ${yLevel} 1 minecraft:redstone_block\n`);
             setTimeout(function() { //remove redstone block
-                oneTime('/fill 6 63 1 6 63 1 minecraft:air\n');
+                oneTime(`/fill 6 ${yLevel} 1 6 ${yLevel} 1 minecraft:air\n`);
             },500);//consider saying when its over in game
             setTimeout(function() { //remove redstone wire
-                oneTime(`/fill 6 63 3 6 63 3 minecraft:air\n`);
+                oneTime(`/fill 6 ${yLevel} 3 6 ${yLevel} 3 minecraft:air\n`);
             },1000*60*1.5);//consider saying when its over in game
         }else {
             console.log("unexpected", command);

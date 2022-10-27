@@ -15,6 +15,8 @@ twitch name regex
 
 -condense websocket on frontend and backend into one websocket
 
+TEST WITH CONCURRENT VOTING
+
 figure out how to make the weather work everywhere
 -----  more medium power ones ----- 
 1 min of 5s tnt ever 15 seconds
