@@ -20,6 +20,7 @@ var minecraftServerProcess = childProcess.spawn('java', [
 //commands block layout (streamer, y level)
 const commandBlockLayout = [
     {streamerName:"thejargoncommander",yLevel:"53"},
+    {streamerName:"ybotman",yLevel:"73"},
     {streamerName:"ymanishere",yLevel:"63"},
 ]
 // Log server output to stdout
@@ -70,7 +71,9 @@ let log = function(data) {
                 }))
             });
         }
-    }else {
+    }else if(output.includes("Applied effect Night Vision to")){
+        return;
+    }else{
         process.stdout.write(output);
     }
 }
@@ -541,6 +544,7 @@ client.on('connect', function(connection) {
                                 parseInt(parsedMessage.command.botCommandParams) : -1;
 
                                 if(voteNumber == 1 || voteNumber == 2){
+                                    console.log("[ vote, voter, channelName ] ", [voteNumber, parsedMessage.tags["display-name"],parsedMessage.command.channel.slice(1)]);
                                     addVote(voteNumber, parsedMessage.tags["display-name"],parsedMessage.command.channel.slice(1));
                                 }
                             }

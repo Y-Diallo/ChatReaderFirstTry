@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {useParams} from 'react-router-dom';
 import './View.css';
-const ws = new WebSocket('ws://54.208.28.153:8080/', 'echo-protocol');
-// const ws = new WebSocket('ws://localhost:8080/', 'echo-protocol');
+// const ws = new WebSocket('ws://54.208.28.153:8080/', 'echo-protocol');
+const ws = new WebSocket('ws://localhost:8080/', 'echo-protocol');
 
 function View() {
   interface wsInboundViewMessageData{
