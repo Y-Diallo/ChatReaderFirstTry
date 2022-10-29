@@ -1,6 +1,4 @@
--auto random
--weighted random
--add animations to front end? maybe use obs chromakeying
+-add animations to front end? maybe use obs chromakeying consider redux?
 
 -make commands work with diff minecraft names
 -join multiple channels
@@ -15,12 +13,16 @@ twitch name regex
 
 -condense websocket on frontend and backend into one websocket
 
-TEST WITH CONCURRENT VOTING
+-make frontend have timEnd websocket be optional (default false)
 
 figure out how to make the weather work everywhere
 
 /setblock ~ ~1 ~ minecraft:command_block 0 replace {Command:"Put your command here"}
 
+---- out of scope but could be cool changes ----
+separate minecraft server onto different service
+separate chat service onto different service
+separate frontend + basic backend w/ websocket on service
 -----  more medium power ones ----- 
 1 min of 5s tnt ever 15 seconds
 iron armor

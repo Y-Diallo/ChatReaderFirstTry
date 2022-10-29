@@ -19,17 +19,16 @@ var minecraftServerProcess = childProcess.spawn('java', [
 ]);
 //commands block layout (streamer, y level)
 const commandBlockLayout = [
-    {streamerName:"thejargoncommander",yLevel:"53"},
-    {streamerName:"ybotman",yLevel:"73"},
-    {streamerName:"ymanishere",yLevel:"63"},
+    {minecraftName:"jargoncommander",yLevel:"53"},
+    {minecraftName:"yman234",yLevel:"63"},
 ]
 // Log server output to stdout
 let ws = [];
 let twsc;
 let channels = [];
 // [{//sample channel
-//     streamerName:"YmanIsHere",
-//     minecraftName:"yman234",
+//     streamerName:"YmanIsHere",//now streamer group
+//     minecraftName:"yman234",//now minecraft group
 //     votes:[0,0],
 //     voters:[],
 //     selectedCommands:[],
@@ -54,9 +53,16 @@ let log = function(data) {
         posZ = Math.round(parseInt(posZ.slice(0,posZ.length-1)));
         //find out what channel it is from
         let streamerNames = [];
+        let minecraftUser;
         channels.forEach((channel)=>{
-            if(output.includes(channel.minecraftName)){
-                streamerNames.push(channel.streamerName);
+            if(channel.minecraftName.some((name)=>{
+                if(output.includes(name)){
+                    minecraftUser = name;
+                    return true;
+                }
+                return false;
+            })){
+                streamerNames = channel.streamerName;
             }
         });
         // console.log("streamerNames", streamerNames);
@@ -68,6 +74,7 @@ let log = function(data) {
                     posY: posY,
                     posZ: posZ,
                     streamerNames:streamerNames,
+                    minecraftUser:minecraftUser
                 }))
             });
         }
@@ -85,17 +92,17 @@ const oneTime = (command)=>{
 }
 
 //voting variables
-const runCommands = (command, channel) => {
-    console.log("running command", [command, channel]);
+const runCommands = (command, minecraftName, voters) => {
+    console.log("running command", [command, minecraftName]);
     if(command.repeat){
         console.log("running repeat command", command);
         if(command.name === "Snowball Art"){
             oneTime(command.command);
-            oneTime(`give ${channel.minecraftName} minecraft:snowball 32\n`);
+            oneTime(`give ${minecraftName} minecraft:snowball 32\n`);
             setTimeout(function() { oneTime('/fill 5 63 1 5 63 1 minecraft:air\n')},1000*60*5);//consider saying when its over in game
         }else if(command.name === "Ride Snowball"){
             oneTime(command.command);
-            oneTime(`give ${channel.minecraftName} minecraft:snowball 32\n`);
+            oneTime(`give ${minecraftName} minecraft:snowball 32\n`);
             setTimeout(function() { oneTime('/fill 2 63 1 2 63 1 minecraft:air\n')},1000*60*5);
         }else if(command.name === "Human Drill"){
             oneTime(command.command);
@@ -107,42 +114,42 @@ const runCommands = (command, channel) => {
     }else if(command.hoard){
         let totalRuns = 100;
         for(let timesRan = 0; timesRan<totalRuns; timesRan++){
-            if(timesRan< channel.voters.length){
-                for(let zombieToViewer = 0; zombieToViewer < totalRuns/channel.voters.length ; zombieToViewer++){
-                    oneTime(`/execute at ${channel.minecraftName} run summon ${command.command} ^${Math.floor(Math.random()*7)} ^2 ^${Math.floor(Math.random()*7)} {CustomName:'{"text":"${channel.voters[timesRan]}"}'}\n`);
+            if(timesRan< voters.length){
+                for(let zombieToViewer = 0; zombieToViewer < totalRuns/voters.length ; zombieToViewer++){
+                    oneTime(`/execute at ${minecraftName} run summon ${command.command} ^${Math.floor(Math.random()*7)} ^2 ^${Math.floor(Math.random()*7)} {CustomName:'{"text":"${voters[timesRan]}"}'}\n`);
                     totalRuns--;
                 }
             }else{
-                oneTime(`/execute at ${channel.minecraftName} run summon ${command.command} ^${Math.floor(Math.random()*7)} ^2 ^${Math.floor(Math.random()*7)} {CustomName:'{"text":"ybotman"}'}\n`);
+                oneTime(`/execute at ${minecraftName} run summon ${command.command} ^${Math.floor(Math.random()*7)} ^2 ^${Math.floor(Math.random()*7)} {CustomName:'{"text":"ybotman"}'}\n`);
             }
         }
     }else if(command.special){
         //figure out which special case it is
         let yLevel = 100;
         commandBlockLayout.forEach((commandBlock)=>{
-            if(channel.streamerName === commandBlock.streamerName){
+            if(minecraftName === commandBlock.minecraftName){
                 yLevel = commandBlock.yLevel;
             }
         });
         if(command.name === "Full Armor"){
-            oneTime(`/give ${channel.minecraftName} minecraft:netherite_helmet{Enchantments:[{id:protection,lvl:255},{id:thorns,lvl:255},{id:unbreaking,lvl:255}]}\n`);
-            oneTime(`/give ${channel.minecraftName} minecraft:netherite_chestplate{Enchantments:[{id:protection,lvl:255},{id:thorns,lvl:255},{id:mending,lvl:255},{id:unbreaking,lvl:255}]}\n`);
-            oneTime(`/give ${channel.minecraftName} minecraft:netherite_leggings{Enchantments:[{id:protection,lvl:255},{id:thorns,lvl:255},{id:mending,lvl:255},{id:unbreaking,lvl:255}]}\n`);
-            oneTime(`/give ${channel.minecraftName} minecraft:netherite_boots{Enchantments:[{id:protection,lvl:255},{id:thorns,lvl:255},{id:mending,lvl:255},{id:unbreaking,lvl:255}]}\n`);
+            oneTime(`/give ${minecraftName} minecraft:netherite_helmet{Enchantments:[{id:protection,lvl:255},{id:thorns,lvl:255},{id:unbreaking,lvl:255}]}\n`);
+            oneTime(`/give ${minecraftName} minecraft:netherite_chestplate{Enchantments:[{id:protection,lvl:255},{id:thorns,lvl:255},{id:mending,lvl:255},{id:unbreaking,lvl:255}]}\n`);
+            oneTime(`/give ${minecraftName} minecraft:netherite_leggings{Enchantments:[{id:protection,lvl:255},{id:thorns,lvl:255},{id:mending,lvl:255},{id:unbreaking,lvl:255}]}\n`);
+            oneTime(`/give ${minecraftName} minecraft:netherite_boots{Enchantments:[{id:protection,lvl:255},{id:thorns,lvl:255},{id:mending,lvl:255},{id:unbreaking,lvl:255}]}\n`);
         }else if(command.name === "Iron Armor"){
-            oneTime(`/give ${channel.minecraftName} minecraft:netherite_helmet{Enchantments:[{id:protection,lvl:255},{id:thorns,lvl:255},{id:unbreaking,lvl:255}]}\n`);
-            oneTime(`/give ${channel.minecraftName} minecraft:netherite_chestplate{Enchantments:[{id:protection,lvl:255},{id:thorns,lvl:255},{id:mending,lvl:255},{id:unbreaking,lvl:255}]}\n`);
-            oneTime(`/give ${channel.minecraftName} minecraft:netherite_leggings{Enchantments:[{id:protection,lvl:255},{id:thorns,lvl:255},{id:mending,lvl:255},{id:unbreaking,lvl:255}]}\n`);
-            oneTime(`/give ${channel.minecraftName} minecraft:netherite_boots{Enchantments:[{id:protection,lvl:255},{id:thorns,lvl:255},{id:mending,lvl:255},{id:unbreaking,lvl:255}]}\n`);
+            oneTime(`/give ${minecraftName} minecraft:netherite_helmet{Enchantments:[{id:protection,lvl:255},{id:thorns,lvl:255},{id:unbreaking,lvl:255}]}\n`);
+            oneTime(`/give ${minecraftName} minecraft:netherite_chestplate{Enchantments:[{id:protection,lvl:255},{id:thorns,lvl:255},{id:mending,lvl:255},{id:unbreaking,lvl:255}]}\n`);
+            oneTime(`/give ${minecraftName} minecraft:netherite_leggings{Enchantments:[{id:protection,lvl:255},{id:thorns,lvl:255},{id:mending,lvl:255},{id:unbreaking,lvl:255}]}\n`);
+            oneTime(`/give ${minecraftName} minecraft:netherite_boots{Enchantments:[{id:protection,lvl:255},{id:thorns,lvl:255},{id:mending,lvl:255},{id:unbreaking,lvl:255}]}\n`);
         }else if(command.name === "Bumpin Bow"){
             oneTime(command.command);
-            oneTime(`/give ${channel.minecraftName} arrow 64\n`);
+            oneTime(`/give ${minecraftName} arrow 64\n`);
         }else if(command.name === "Ok Bow"){
             oneTime(command.command);
-            oneTime(`/give ${channel.minecraftName} arrow 64\n`);
+            oneTime(`/give ${minecraftName} arrow 64\n`);
         }else if(command.name === "Pokey Bow"){
             oneTime(command.command);
-            oneTime(`/give ${channel.minecraftName} arrow 64\n`);
+            oneTime(`/give ${minecraftName} arrow 64\n`);
         }else if(command.name === "Tnt Chase"){
             oneTime(`/fill 6 ${yLevel} 3 6 ${yLevel} 3 minecraft:redstone_wire\n`);
             oneTime(`/fill 6 ${yLevel} 1 6 ${yLevel} 1 minecraft:redstone_block\n`);
@@ -156,7 +163,7 @@ const runCommands = (command, channel) => {
             console.log("unexpected", command);
         }
     }else{
-        let runCommand = command.command.replace("**name**",channel.minecraftName);
+        let runCommand = command.command.replace("**name**",minecraftName);
         oneTime(runCommand);
         if(command.name === "Clear Items"){
             oneTime("/kill @e[type=item]\n");
@@ -185,28 +192,36 @@ const isValidMinecraftName=(minecraftName)=>{
 }
 
 const locateChannel=({streamerName, minecraftName})=>{
-    if(!isValidMinecraftName(minecraftName)){
+    let minecraftGroup = minecraftName.split("&");
+    if(!minecraftGroup.every((name)=>isValidMinecraftName(name))){
         return -1;
     }
-    let voterIndex = channels.findIndex((item)=>item.streamerName == streamerName);
+    let streamGroup = streamerName.split("&");
+    let voterIndex = channels.findIndex((item)=>{
+        return item.streamerName.every((streamer)=>streamGroup.includes(streamer)) && item.streamerName.length==streamGroup.length;
+    });
     let currentChannel;
     if(voterIndex == -1){
         //check data validity (streamer name/ minecraft name)
         //do nothing/send error to command interface if incorrectly formatted
-        twsc.sendUTF(`JOIN #${streamerName}`);
-        channels.push({streamerName: streamerName, minecraftName: minecraftName});
+        streamGroup.forEach((streamer)=>twsc.sendUTF(`JOIN #${streamer}`));
+        
+        channels.push({streamerName: streamGroup, minecraftName: minecraftGroup});
         currentChannel = channels.at(channels.length-1);
-        console.info("adding new streamer:",[streamerName, minecraftName]);
+        console.info("adding new stream group:",[streamGroup, minecraftGroup]);
     }else{
         currentChannel = channels.at(voterIndex);
-        console.info("new commands for streamer:",streamerName);
+        console.info("new commands for streamer:",streamGroup);
     }
     return currentChannel;
 }
 
 //voting system
 const addVote = (vote, name, streamerName)=>{ //expect votes in range [1,2]
-    let voterIndex = channels.findIndex((item)=>item.streamerName == streamerName);
+    let streamGroup = streamerName.split("&");
+    let voterIndex = channels.findIndex((item)=>{
+        return item.streamerName.every((streamer)=>streamGroup.includes(streamer)) && item.streamerName.length==streamGroup.length;
+    });
     if(voterIndex == -1){//streamer name should always exist
         console.log("streamer name not in channels array", streamerName);
         return;
@@ -342,14 +357,17 @@ voteServer.on('request', function(request) {
             let messageData = JSON.parse(message.utf8Data);
             connection.sendUTF(message.utf8Data);
             if((messageData.mode && messageData.mode === "timeEnd")){
-                let voterIndex = channels.findIndex((item)=>item.streamerName == messageData.streamerName);
+                let streamGroup = messageData.streamerName.split("&");
+                let voterIndex = channels.findIndex((item)=>{
+                    return item.streamerName.every((streamer)=>streamGroup.includes(streamer)) && item.streamerName.length==streamGroup.length;
+                });
                 let currentChannel;
                 if(voterIndex == -1){
                     //there shouldn't be any new streamers from timeEnd
                 }else{
                     currentChannel = channels.at(voterIndex);
-                    runCommands(messageData.winner, currentChannel);
-                    console.log("autoRandom State", [currentChannel.streamerName, currentChannel.autoRandom]);
+                    currentChannel.minecraftName.forEach((name)=>runCommands(messageData.winner, name,currentChannel.voters));
+                    // console.log("autoRandom State", [currentChannel.streamerName, currentChannel.autoRandom]);
                     if (currentChannel.autoRandom) {
                         currentChannel.selectedCommands = [commands[weightedRandom()],commands[weightedRandom()]];
                         console.log("randomized new commands, updating ui");
@@ -359,7 +377,6 @@ voteServer.on('request', function(request) {
                             connection.sendUTF(JSON.stringify({
                                 type: "view",
                                 streamerName: currentChannel.streamerName,
-                                minecraftName: currentChannel.minecraftName,
                                 selectedCommands: currentChannel.selectedCommands,
                                 votes: currentChannel.votes,
                                 voter: "",

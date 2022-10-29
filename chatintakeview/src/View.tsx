@@ -7,7 +7,7 @@ const ws = new WebSocket('ws://localhost:8080/', 'echo-protocol');
 function View() {
   interface wsInboundViewMessageData{
     type : string,    
-    streamerName: string,
+    streamerName: string[],
     selectedCommands: commandDetails[],
     votes: number[],
     voter : string,
@@ -16,11 +16,11 @@ function View() {
   }
   interface wsInboundPositionViewMessageData{
     type : string,    
-    streamerName: string,
     posX: number,
     posY: number,
     posZ: number,
     streamerNames: string[],
+    minecraftUser:string
   }
   interface commandDetails {
     command : string,
@@ -35,7 +35,7 @@ function View() {
   const viewCommands = useRef<commandDetails[]>([{command:"",name:"Diamond Sword"},{command:"",name:"Tnt Spawn"}]);
   const votes1 = useRef(1);
   const votes2 = useRef(1);
-  const { streamerName } = useParams();
+  const { streamerName , minecraftName } = useParams();
   const [totalVotes,setTotalVotes] = useState(2);
   const [position, setPosition] = useState([500,110,500]);
   const dateInital = useRef(new Date());// 1 second
@@ -52,7 +52,7 @@ function View() {
       // listen to data sent from the websocket server
       const message = JSON.parse(evt.data);
       console.log("message from server", message);
-      if(message.streamerName && (streamerName === message.streamerName)){
+      if(message.streamerName && message.streamerName.includes(streamerName)){
         if(message.type && ('view' === message.type)){
             const messageData : wsInboundViewMessageData = message;
             if(messageData.newDetails){
@@ -76,7 +76,7 @@ function View() {
         console.log("streamer name " + streamerName + " and streamer array ",messageData.streamerNames);
         if(messageData.streamerNames.find((name)=>{
             return name === streamerName;
-        })){
+        }) && messageData.minecraftUser === minecraftName){
             let posX = messageData.posX;
             let posY = messageData.posY+60;
             //bedrock at -60, floor around 60, adjust to make bedrock 0
