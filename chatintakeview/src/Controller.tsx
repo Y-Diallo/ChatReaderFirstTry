@@ -15,14 +15,14 @@ function Controller() {
   }
   interface wsOutboundCommandMessageData {
     mode: string,
-    streamerName: string | undefined,
-    minecraftName: string | undefined,
+    streamerNames: string[],
+    minecraftNames: string[],
     seconds : number,
     selectedCommands: commandDetails[],
   }
   const selectedCommands = useRef<commandDetails[]>([commands[0],commands[0]]);
   const [newTime, setNewTime] = useState(90);//300 seconds  
-  const { streamerName, minecraftName } = useParams();
+  const { streamerNames = "", minecraftNames = "" } = useParams();
 
   useEffect(() => {
     ws.onopen = () => {
@@ -43,8 +43,8 @@ function Controller() {
     }
     const outBoundMessage : wsOutboundCommandMessageData = {
       mode: "command",
-      streamerName: streamerName,
-      minecraftName: minecraftName,
+      streamerNames: streamerNames.split("&"),
+      minecraftNames: minecraftNames.split("&"),
       seconds : newTime,
       selectedCommands: selectedCommands.current,
     };
@@ -61,8 +61,8 @@ function Controller() {
     let random2 = Math.floor(Math.random() * (max - min + 1) + min);
     const outBoundMessage : wsOutboundCommandMessageData = {
       mode: "command",
-      streamerName: streamerName,
-      minecraftName: minecraftName,
+      streamerNames: streamerNames.split("&"),
+      minecraftNames: minecraftNames.split("&"),
       seconds : newTime,
       selectedCommands: [commands[random1],commands[random2]],
     };
@@ -78,42 +78,42 @@ function Controller() {
     let random1 = Math.floor(Math.random() * (max - min + 1) + min);
     const outBoundMessage : wsOutboundCommandMessageData = {
       mode: "command",
-      streamerName: streamerName,
-      minecraftName: minecraftName,
+      streamerNames: streamerNames.split("&"),
+      minecraftNames: minecraftNames.split("&"),
       seconds : newTime,
       selectedCommands: [selectedCommands.current[0],commands[random1]],
     };
     ws.send(JSON.stringify(outBoundMessage));
   }
 
-  const avghans =()=>{
-    const outBoundMessage = {
-      mode: "avghans",
-      streamerName: streamerName,
-      minecraftName: minecraftName,
-    };
-    ws.send(JSON.stringify(outBoundMessage));
-  }
+  // const avghans =()=>{
+  //   const outBoundMessage = {
+  //     mode: "avghans",
+  //     streamerNames: streamerNames.split("&"),
+  //     minecraftNames: minecraftNames.split("&"),
+  //   };
+  //   ws.send(JSON.stringify(outBoundMessage));
+  // }
 
   const autoRandom =(e: any)=>{
     const outBoundMessage = {
       mode: "autoRandom",
-      streamerName: streamerName,
-      minecraftName: minecraftName,
+      streamerNames: streamerNames.split("&"),
+      minecraftNames: minecraftNames.split("&"),
       state: e.target.id === "on" ? true:false,
       seconds : newTime,
     };
     ws.send(JSON.stringify(outBoundMessage));
   }
-  const updatePosition =(e: any)=>{
-    const outBoundMessage = {
-      mode: "updatePosition",
-      streamerName: streamerName,
-      minecraftName: minecraftName,
-      state: e.target.id === "on" ? true:false,
-    };
-    ws.send(JSON.stringify(outBoundMessage));
-  }
+  // const updatePosition =(e: any)=>{
+  //   const outBoundMessage = {
+  //     mode: "updatePosition",
+  //     streamerNames: streamerNames.split("&"),
+  //     minecraftNames: minecraftNames.split("&"),
+  //     state: e.target.id === "on" ? true:false,
+  //   };
+  //   ws.send(JSON.stringify(outBoundMessage));
+  // }
   return (
     <div className='wrapper'>
       <div className="controls">
@@ -148,11 +148,11 @@ function Controller() {
       <div className="buttonContainer">
         <input className='button-30' type="button" onClick={() => submitRandomUpdate()} value="Complete Random"/>
         <input className='button-30' type="button" onClick={() => submitOneRandomUpdate()} value="Second Command Random"/>
-        {streamerName === "YmanIsHere" ? <input className='button-30' type="button" onClick={() => avghans()} value="Avghans"/>:<></>}
+        {/* {streamerNames === "YmanIsHere" ? <input className='button-30' type="button" onClick={() => avghans()} value="Avghans"/>:<></>} */}
         <input className='button-30' id="on" type="button" onClick={(e) => autoRandom(e)} value="autoRandom on"/>
         <input className='button-30' id="off" type="button" onClick={(e) => autoRandom(e)} value="autoRandom off"/>
-        <input className='button-30'id="on" type="button" onClick={(e) => updatePosition(e)} value="updatePosition on"/>
-        <input className='button-30' id="off" type="button" onClick={(e) => updatePosition(e)} value="updatePosition off"/>
+        {/* <input className='button-30'id="on" type="button" onClick={(e) => updatePosition(e)} value="updatePosition on"/>
+        <input className='button-30' id="off" type="button" onClick={(e) => updatePosition(e)} value="updatePosition off"/> */}
       </div>
     </div>
   );

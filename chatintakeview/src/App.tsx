@@ -8,7 +8,7 @@ function App() {
   return (
       <Router>
         <Routes>
-          <Route path="/:streamerName/:minecraftName" element={<Controller/>}/>
+          <Route path="/:streamerNames/:minecraftNames" element={<Controller/>}/>
           <Route path="/view/:streamerName" element={<View/>}/>
           <Route path="*" element={<NotFound/>}/>
         </Routes>

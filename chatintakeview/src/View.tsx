@@ -7,21 +7,20 @@ const ws = new WebSocket('ws://localhost:8080/', 'echo-protocol');
 function View() {
   interface wsInboundViewMessageData{
     type : string,    
-    streamerName: string,
+    streamerNames: string[],
     selectedCommands: commandDetails[],
     votes: number[],
     voter : string,
     seconds : number,
     newDetails: boolean
   }
-  interface wsInboundPositionViewMessageData{
-    type : string,    
-    streamerName: string,
-    posX: number,
-    posY: number,
-    posZ: number,
-    streamerNames: string[],
-  }
+  // interface wsInboundPositionViewMessageData{ //removed position
+  //   type : string,    
+  //   posX: number,
+  //   posY: number,
+  //   posZ: number,
+  //   streamerNames: string[],
+  // }
   interface commandDetails {
     command : string,
     name : string,
@@ -35,9 +34,9 @@ function View() {
   const viewCommands = useRef<commandDetails[]>([{command:"",name:"Diamond Sword"},{command:"",name:"Tnt Spawn"}]);
   const votes1 = useRef(1);
   const votes2 = useRef(1);
-  const { streamerName } = useParams();
+  const { streamerName = "" } = useParams();
   const [totalVotes,setTotalVotes] = useState(2);
-  const [position, setPosition] = useState([500,110,500]);
+  // const [position, setPosition] = useState([500,110,500]);
   const dateInital = useRef(new Date());// 1 second
   const timeoutHold = useRef<NodeJS.Timer>();
   dateInital.current.setSeconds(dateInital.current.getSeconds() + 5);
@@ -52,7 +51,7 @@ function View() {
       // listen to data sent from the websocket server
       const message = JSON.parse(evt.data);
       console.log("message from server", message);
-      if(message.streamerName && (streamerName === message.streamerName)){
+      if(message.streamerNames && message.streamerNames.includes(streamerName)){
         if(message.type && ('view' === message.type)){
             const messageData : wsInboundViewMessageData = message;
             if(messageData.newDetails){
@@ -71,21 +70,22 @@ function View() {
     
             setTotalVotes(messageData.votes[0]+messageData.votes[1]);
         }
-    }else if(message.type && 'positionView' === message.type){
-        const messageData : wsInboundPositionViewMessageData = message;
-        console.log("streamer name " + streamerName + " and streamer array ",messageData.streamerNames);
-        if(messageData.streamerNames.find((name)=>{
-            return name === streamerName;
-        })){
-            let posX = messageData.posX;
-            let posY = messageData.posY+60;
-            //bedrock at -60, floor around 60, adjust to make bedrock 0
-            let posZ = messageData.posZ;
-            posY = posY < 0 ? 0 : posY;
-            console.log("position [x,y,z]", [posX,posY,posZ]);
-            setPosition([posX,posY,posZ]);
-        }
     }
+    // else if(message.type && 'positionView' === message.type){
+    //     const messageData : wsInboundPositionViewMessageData = message;
+    //     console.log("streamer name " + streamerName + " and streamer array ",messageData.streamerNames);
+    //     if(messageData.streamerNames.find((name)=>{
+    //         return name === streamerName;
+    //     })){
+    //         let posX = messageData.posX;
+    //         let posY = messageData.posY+60;
+    //         //bedrock at -60, floor around 60, adjust to make bedrock 0
+    //         let posZ = messageData.posZ;
+    //         posY = posY < 0 ? 0 : posY;
+    //         console.log("position [x,y,z]", [posX,posY,posZ]);
+    //         setPosition([posX,posY,posZ]);
+    //     }
+    // }
     
 }
     ws.onclose = () => {
@@ -150,7 +150,7 @@ function View() {
           </span>
         </span>
       </div>
-      <span className='allPosition'>
+      {/* <span className='allPosition'>
         <div className="positionDisplay">
           <span className='blocksLeft'><span>{position[1]}</span><br/>Blocks<br/>TO GO</span>
           <div className="positionBar">
@@ -183,7 +183,7 @@ function View() {
             }}></span>
           </div>
         </div>
-      </span>
+      </span> */}
       {/* <button onClick={() => ws.send(JSON.stringify({something:"hi"}))}>send hi</button> */}
       {/* <button onClick={() => startTimer(100)}>startTimer</button> */}
     </>
