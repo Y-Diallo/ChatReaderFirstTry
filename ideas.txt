@@ -21,6 +21,15 @@ figure out how to make the weather work everywhere
 
 /setblock ~ ~1 ~ minecraft:command_block 0 replace {Command:"Put your command here"}
 
+food potion
+
+less tnt
+
+some positve
+
+shoutout miagooper
+shoutout jargoncommander
+
 -----  more medium power ones ----- 
 1 min of 5s tnt ever 15 seconds
 iron armor
