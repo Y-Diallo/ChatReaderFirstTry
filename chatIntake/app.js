@@ -1,22 +1,17 @@
 var express = require('express');
 var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+// var cookieParser = require('cookie-parser');
+// var logger = require('morgan');
 var password = require('./secret');
 const commands = require('../chatintakeview/src/minecraftCommands');
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+// var indexRouter = require('./routes/index');
+// var usersRouter = require('./routes/users');
 const childProcess = require('child_process');
 var http = require('http');
+const directory = './moddedServer';
 
-
-var minecraftServerProcess = childProcess.spawn('java', [
-    '-Xmx1024M',
-    '-Xms1024M',
-    '-jar',
-    'server.jar',
-    'nogui'
-]);
+var minecraftServerProcess = childProcess.spawn('run.bat', [],
+ {cwd: directory});
 // //commands block layout (streamer, y level)
 // const commandBlockLayout = [
 //     {streamerNames:"thejargoncommander",yLevel:"53"},
@@ -72,11 +67,12 @@ let log = function(data) {
     //             }))
     //         });
     //     }
-    // }else if(output.includes("Applied effect Night Vision to")){
-    //     return;
-    // }else{
+    // }else 
+    if(output.includes("Applied effect Night Vision to")){
+        return;
+    }else{
         process.stdout.write(output);
-    // }
+    }
 }
 minecraftServerProcess.stdout.on('data', log);
 minecraftServerProcess.stderr.on('data', log);
