@@ -12,7 +12,7 @@ const directory = './moddedServer';
 
 // var minecraftServerProcess = childProcess.spawn('run.bat', [],
 //  {cwd: directory});//windows
-var minecraftServerProcess = childProcess.spawn('run.sh', [],
+var minecraftServerProcess = childProcess.spawn('./run.sh', [],
  {cwd: directory});
 
 
