@@ -10,8 +10,12 @@ const childProcess = require('child_process');
 var http = require('http');
 const directory = './moddedServer';
 
-var minecraftServerProcess = childProcess.spawn('run.bat', [],
+// var minecraftServerProcess = childProcess.spawn('run.bat', [],
+//  {cwd: directory});//windows
+var minecraftServerProcess = childProcess.spawn('run.sh', [],
  {cwd: directory});
+
+
 // //commands block layout (streamer, y level)
 // const commandBlockLayout = [
 //     {streamerNames:"thejargoncommander",yLevel:"53"},
