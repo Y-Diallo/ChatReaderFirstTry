@@ -2,8 +2,8 @@ import React, { useRef, useState, useEffect } from 'react';
 import {useParams} from 'react-router-dom';
 import './Controller.css';
 import commands from './minecraftCommands';
-// const ws = new WebSocket('ws://54.208.28.153:7070/', 'echo-protocol');
-const ws = new WebSocket('ws://3.80.154.146:7070/', 'echo-protocol');
+const ws = new WebSocket('ws://54.208.28.153:7070/', 'echo-protocol');
+// const ws = new WebSocket('ws://3.80.154.146:7070/', 'echo-protocol');
 // const ws = new WebSocket('ws://localhost:7070/', 'echo-protocol');
 
 function Controller() {

@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {useParams} from 'react-router-dom';
 import './View.css';
-// const ws = new WebSocket('ws://54.208.28.153:8080/', 'echo-protocol');
-const ws = new WebSocket('ws://3.80.154.146:8080/', 'echo-protocol');
+const ws = new WebSocket('ws://54.208.28.153:8080/', 'echo-protocol');
+// const ws = new WebSocket('ws://3.80.154.146:8080/', 'echo-protocol');
 // const ws = new WebSocket('ws://localhost:8080/', 'echo-protocol');
 
 function View() {
@@ -35,12 +35,12 @@ function View() {
   const viewCommands = useRef<commandDetails[]>([{command:"",name:"Diamond Sword"},{command:"",name:"Tnt Spawn"}]);
   const votes1 = useRef(1);
   const votes2 = useRef(1);
-  const { streamerName = "" } = useParams();
+  const { streamerName = "", sendEnding = "" } = useParams();
   const [totalVotes,setTotalVotes] = useState(2);
   // const [position, setPosition] = useState([500,110,500]);
-  const dateInital = useRef(new Date());// 1 second
+  const dateInitial = useRef(new Date());// 1 second
   const timeoutHold = useRef<NodeJS.Timer>();
-  dateInital.current.setSeconds(dateInital.current.getSeconds() + 5);
+  dateInitial.current.setSeconds(dateInitial.current.getSeconds() + 5);
 
   useEffect(() => {
     ws.onopen = () => {
@@ -100,7 +100,7 @@ function View() {
     if(seconds >= 0){
       setTime(seconds);
       timeoutHold.current = setTimeout(()=>startTimer(seconds-1) ,1000);
-    }else{
+    }else if(sendEnding === "send"){//seconds == 0
       winner.current = ((votes1.current===votes2.current) ? Math.round(Math.random()):(votes1.current>votes2.current ?0:1));
       console.log(`the winner is ${winner.current} and the votes are 1: ${votes1.current}  2:${votes2.current}`);
       const outBoundMessage = {

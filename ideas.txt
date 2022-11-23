@@ -1,21 +1,18 @@
--auto random
--weighted random
--add animations to front end? maybe use obs chromakeying
+-add animations to front end /// consider obs chromakeying
 
--make commands work with diff minecraft names
--join multiple channels
+-make commands work individually by choice 
+    (like randomly selects between all the players up to the num of players in the array)
 
--remove streamer check code duplication
--test auto random and random buttons
+-remove command duplication with multiple views (uses dates)
 
--make commands work with different streamers
--consider multiple minecraft names per twitch name
+
+
 twitch name regex
 /^(#)?[a-zA-Z0-9]{4,25}$/
 
--condense websocket on frontend and backend into one websocket
+//bad idea v websocket for the front end implements data hiding
+//-condense websocket on frontend and backend into one websocket
 
-TEST WITH CONCURRENT VOTING
 
 figure out how to make the weather work everywhere
 
