@@ -324,8 +324,8 @@ const weightedRandom = ()=>{
     let min = 0;
     let raritySelect = Math.floor(Math.random() * (10 - 1 + 1) + 1);
     let randomNum;
-    let highRare = 5;
-    let lowRare = 2;
+    let highRare = 20;
+    let lowRare = 8;
     if(raritySelect > 7){//super rare
         randomNum = random.int(max, lowRare);
     }else if(raritySelect > 4){//less rare
