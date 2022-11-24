@@ -98,7 +98,7 @@ const runCommands = (command, channel) => {
                         totalRuns--;
                     }
                 }else{
-                    oneTime(`/execute at ${minecraftName} run summon ${command.command} ^${Math.floor(Math.random()*7)*(zombieToViewer % 2 == 0 ? -1 : 1)} ^2 ^${Math.floor(Math.random()*7)*(zombieToViewer % 2 == 0 ? -1 : 1)} {CustomName:'{"text":"ybotman"}'}\n`);
+                    oneTime(`/execute at ${minecraftName} run summon ${command.command} ^${Math.floor(Math.random()*7)} ^2 ^${Math.floor(Math.random()*7)} {CustomName:'{"text":"ybotman"}'}\n`);
                 }
             }
         }else if(command.special){
