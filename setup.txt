@@ -1,0 +1,8 @@
+add mods
+stress test server
+
+
+update the twitch key
+consider increasing memory/cpu
+start the nginx service
+start the main service
