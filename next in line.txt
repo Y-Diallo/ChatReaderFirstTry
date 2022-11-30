@@ -10,6 +10,8 @@ wordle
 grey screen (timeout)
 no info (guess what to do to pass the screen)
 among us tasks basically
+less frequent votes, say in chat when vote is open and closed
+
 
 consider adding box in stream, that says what is going on
 
@@ -23,8 +25,3 @@ live 50 rounds atleast
 give viewers direct control over the next round
 like type of creature + buff or us + debuff etc
 
-
-
-Shopping list:
-permanent cable for tablet
-touch portal premium
